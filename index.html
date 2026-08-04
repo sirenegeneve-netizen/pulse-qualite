@@ -542,8 +542,8 @@
    Remplacez les deux valeurs ci-dessous par celles de votre projet :
    Project Settings → API → Project URL / anon public key
    ============================================================ */
-const SUPABASE_URL = https://vblfvrrukvfrzwtqgboo.supabase.co/rest/v1/;
-const SUPABASE_ANON_KEY = sb_publishable_h3Ka1v4ZqUuk-F0o8s0tpA_-T-62hg0;
+const SUPABASE_URL = https://vblfvrrukvfrzwtqgboo.supabase.co ;
+const SUPABASE_ANON_KEY = sb_publishable_h3Ka1v4ZqUuk-F0o8s0tpA_-T-62hg0 ;
 
 let sb = null;
 let dbReady = false;
@@ -689,7 +689,7 @@ function renderToday(){
     row.innerHTML = `<span class="dot dot-${s.statut}"></span><span class="name">${s.nom}</span><span class="meta">${s.indicateurs||''}</span>`;
     retenir.appendChild(row);
   });
-  if(!retenir.innerHTML) retenir.innerHTML = '<div class="empty-row">Aucun service en vigilance ou en priorité aujourd\\'hui.</div>';
+  if(!retenir.innerHTML) retenir.innerHTML = '<div class="empty-row">Aucun service en vigilance ou en priorité aujourd\'hui.</div>';
 
   const vdj = document.getElementById('voixDuJour');
   const lastCompliment = VOIX.find(v=>v.type==='compliment');
