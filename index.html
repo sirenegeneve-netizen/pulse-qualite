@@ -201,6 +201,74 @@
   .toast.show{ opacity:1; transform:translateX(-50%) translateY(0); }
   .setup-banner{ background:var(--amber-tint); border:1px solid var(--amber); color:#7A5420; border-radius:12px; padding:14px 16px; font-size:13px; margin-bottom:18px; line-height:1.6; }
   .setup-banner code{ background:rgba(0,0,0,.06); padding:1px 5px; border-radius:4px; font-family:'IBM Plex Mono'; }
+  .mobile-brand{ display:none; }
+
+  /* ===================================================================
+     RESPONSIVE
+     - PC (au-delà de 1024px) : aucun changement, mise en page d'origine.
+     - Tablette (601px – 1024px) : barre latérale conservée à gauche,
+       simplement plus étroite, icônes seules.
+     - Téléphone (600px et moins) : barre de navigation fixe en bas de
+       l'écran, façon application mobile.
+     =================================================================== */
+
+  @media (max-width: 1024px) and (min-width: 601px){
+    .sidebar{ width:84px; padding:20px 10px; align-items:center; }
+    .brand{ flex-direction:column; padding:2px 0 18px; }
+    .brand-name, .brand-sub{ display:none; }
+    .nav-group-label{ display:none; }
+    .nav{ width:100%; align-items:center; }
+    .nav button{ justify-content:center; padding:11px 0; }
+    .nav button .ic{ font-size:17px; }
+    .label{ display:none; }
+    .who{ justify-content:center; padding:6px 0; }
+    .who-name, .who-role{ display:none; }
+    #dbStatusText{ display:none; }
+    .db-status{ justify-content:center; padding:6px; }
+    .main{ width:100%; }
+    .section{ padding:6px 20px 50px; }
+    .grid-4, .grid-3{ grid-template-columns:repeat(2,1fr); }
+    .hero-grid{ grid-template-columns:repeat(3,1fr); }
+    .hospmap{ grid-template-columns:repeat(2,1fr); }
+  }
+
+  @media (max-width: 600px){
+    .app{ flex-direction:column; }
+    .sidebar{
+      position:fixed; left:0; right:0; bottom:0; top:auto; height:auto; width:100%;
+      flex-direction:row; align-items:stretch; padding:6px 4px; gap:0;
+      overflow-x:auto; -webkit-overflow-scrolling:touch; z-index:40;
+      box-shadow:0 -4px 18px rgba(10,20,24,.18);
+    }
+    .brand, .sidebar-foot, .nav-group-label{ display:none; }
+    .nav{ flex-direction:row; flex:1; gap:2px; }
+    .nav button, .pulse-link{
+      flex-direction:column; align-items:center; justify-content:center; gap:3px;
+      padding:7px 6px !important; min-width:58px; flex-shrink:0; border-radius:10px;
+      width:auto !important; margin-bottom:0 !important; background:none !important; border:none !important;
+    }
+    .nav button.active, .pulse-link.active{ background:rgba(255,255,255,.12) !important; }
+    .nav button .ic{ font-size:17px; }
+    .label{ font-size:9px; white-space:nowrap; line-height:1.1; }
+    .mobile-brand{
+      display:flex; align-items:center; gap:7px; font-family:'Space Grotesk'; font-weight:700;
+      font-size:14.5px; color:var(--teal-deep); margin-bottom:8px;
+    }
+    .main{ width:100%; }
+    .topbar{ padding:14px 16px 0; }
+    .section{ padding:0 16px 96px; }
+    .section-title{ font-size:20px; }
+    .section-desc{ font-size:12.5px; }
+    .hero{ padding:20px 18px 16px; border-radius:16px; }
+    .hero-title{ font-size:21px; }
+    .grid-4, .grid-3, .grid-2{ grid-template-columns:1fr; }
+    .hero-grid{ grid-template-columns:repeat(2,1fr); }
+    .hospmap{ grid-template-columns:1fr; }
+    .modal{ max-width:92vw; padding:18px; }
+    .chat-shell{ height:65vh; }
+    .clock{ text-align:left; }
+    .section-head{ align-items:flex-start; }
+  }
 </style>
 </head>
 <body>
@@ -219,28 +287,28 @@
     </div>
 
     <button class="nav-item pulse-link active" data-target="today" style="all:unset;display:flex;align-items:center;gap:10px;padding:10px 10px;border-radius:9px;font-size:13.5px;font-weight:600;color:#EAF3F1;width:100%;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);margin-bottom:8px;">
-      <span class="ic">⚡</span> Le patient aujourd'hui
+      <span class="ic">⚡</span><span class="label">Le patient aujourd'hui</span>
     </button>
 
     <div class="nav-group-label">Pilotage</div>
     <ul class="nav">
-      <li><button data-target="dashboard"><span class="ic">🏥</span> Tableau de bord</button></li>
-      <li><button data-target="teams"><span class="ic">👩‍⚕️</span> Les équipes</button></li>
-      <li><button data-target="map"><span class="ic">📈</span> Qualité en temps réel</button></li>
+      <li><button data-target="dashboard"><span class="ic">🏥</span><span class="label">Tableau de bord</span></button></li>
+      <li><button data-target="teams"><span class="ic">👩‍⚕️</span><span class="label">Les équipes</span></button></li>
+      <li><button data-target="map"><span class="ic">📈</span><span class="label">Qualité en temps réel</span></button></li>
     </ul>
 
     <div class="nav-group-label">Écoute & risques</div>
     <ul class="nav">
-      <li><button data-target="voice"><span class="ic">😊</span> Voix du patient</button></li>
-      <li><button data-target="risks"><span class="ic">⚠️</span> Gestion des risques</button></li>
-      <li><button data-target="audits"><span class="ic">📋</span> Audits</button></li>
+      <li><button data-target="voice"><span class="ic">😊</span><span class="label">Voix du patient</span></button></li>
+      <li><button data-target="risks"><span class="ic">⚠️</span><span class="label">Gestion des risques</span></button></li>
+      <li><button data-target="audits"><span class="ic">📋</span><span class="label">Audits</span></button></li>
     </ul>
 
     <div class="nav-group-label">Amélioration</div>
     <ul class="nav">
-      <li><button data-target="ideas"><span class="ic">💡</span> Boîte à idées</button></li>
-      <li><button data-target="ai"><span class="ic">🤖</span> IA Qualité</button></li>
-      <li><button data-target="wins"><span class="ic">🎉</span> Les réussites</button></li>
+      <li><button data-target="ideas"><span class="ic">💡</span><span class="label">Boîte à idées</span></button></li>
+      <li><button data-target="ai"><span class="ic">🤖</span><span class="label">IA Qualité</span></button></li>
+      <li><button data-target="wins"><span class="ic">🎉</span><span class="label">Les réussites</span></button></li>
     </ul>
 
     <div class="sidebar-foot">
@@ -259,6 +327,7 @@
 
   <main class="main">
     <div class="topbar">
+      <div class="mobile-brand">💠 Pulse Qualité</div>
       <svg class="pulseline" viewBox="0 0 1200 26" preserveAspectRatio="none">
         <path d="M0,13 L220,13 L245,4 L262,22 L280,13 L520,13 L545,4 L562,22 L580,13 L900,13 L925,4 L942,22 L960,13 L1200,13"/>
       </svg>
@@ -310,7 +379,7 @@
           <h1 class="section-title">Tableau de bord Direction</h1>
           <p class="section-desc">Tous les indicateurs qualité sur une seule page.</p>
         </div>
-        <button class="btn btn-ghost btn-sm">Exporter le rapport</button>
+        <button class="btn btn-sm" id="btnUpdateIndic">Mettre à jour un indicateur</button>
       </div>
 
       <div class="grid grid-4" id="kpiGrid" style="margin-bottom:14px;"></div>
@@ -374,6 +443,7 @@
           <div class="card kpi"><div class="kpi-label">Confort / repas</div><div class="kpi-value">82<small>%</small></div></div>
         </div>
         <p style="font-size:11.5px;color:var(--ink-faint);margin-top:10px;">Sous-scores illustratifs — la Phase 3 de la roadmap prévoit un vrai questionnaire structuré.</p>
+        <a id="reliaSanteLink" href="#" target="_blank" rel="noopener" class="btn btn-ghost btn-sm" style="display:inline-flex;align-items:center;gap:6px;margin-top:14px;text-decoration:none;">Voir les résultats détaillés sur Relia Santé ↗</a>
       </div>
       <div class="tabpanel" data-panel="compliment"><div class="card" id="panel-compliment"></div></div>
       <div class="tabpanel" data-panel="plainte"><div class="card" id="panel-plainte"></div></div>
@@ -520,6 +590,32 @@
   </div>
 </div>
 
+<div class="modal-overlay" id="modalIndic">
+  <div class="modal">
+    <h3>Mettre à jour un indicateur</h3>
+    <p class="hint">Enregistré en base de données — visible par tous dès l'enregistrement.</p>
+    <div class="field">
+      <label for="inSelect">Indicateur</label>
+      <select id="inSelect"></select>
+    </div>
+    <div class="field"><label for="inValeur">Nouvelle valeur</label><input type="text" id="inValeur" placeholder="Ex : 89"></div>
+    <div class="field"><label for="inUnite">Unité (optionnel)</label><input type="text" id="inUnite" placeholder="Ex : %, /100, classe…"></div>
+    <div class="field">
+      <label for="inTendanceType">Évolution</label>
+      <select id="inTendanceType">
+        <option value="bonne">Amélioration</option>
+        <option value="mauvaise">Dégradation</option>
+        <option value="stable">Stable</option>
+      </select>
+    </div>
+    <div class="field"><label for="inTendanceTxt">Texte affiché (optionnel)</label><input type="text" id="inTendanceTxt" placeholder="Ex : ▲ 2 pts vs mois dernier"></div>
+    <div class="modal-actions">
+      <button class="btn btn-ghost btn-sm" data-close-modal>Annuler</button>
+      <button class="btn btn-sm" id="inSubmit">Enregistrer</button>
+    </div>
+  </div>
+</div>
+
 <div class="modal-overlay" id="modalAudit">
   <div class="modal">
     <h3>Planifier un audit</h3>
@@ -542,8 +638,13 @@
    Remplacez les deux valeurs ci-dessous par celles de votre projet :
    Project Settings → API → Project URL / anon public key
    ============================================================ */
-const SUPABASE_URL = 'https://vblfvrrukvfrzwtqgboo.supabase.co';
-const SUPABASE_ANON_KEY = 'sb_publishable_h3Ka1v4ZqUuk-F0o8s0tpA_-T-62hg0';
+const SUPABASE_URL = 'VOTRE_SUPABASE_URL';
+const SUPABASE_ANON_KEY = 'https://vblfvrrukvfrzwtqgboo.supabase.co';
+
+/* Lien vers la plateforme Relia Santé (anciennement Synapath), utilisée pour
+   les résultats détaillés de satisfaction patient. Remplacez par l'URL réelle
+   dès qu'elle sera disponible — même méthode que pour les clés ci-dessus. */
+const RELIA_SANTE_URL = 'https://github.com/sirenegeneve-netizen/Relia_sante';
 
 let sb = null;
 let dbReady = false;
@@ -721,6 +822,39 @@ function renderDashboard(){
   });
   if(!AUDITS.length) da.innerHTML = '<div class="empty-row">Aucun audit enregistré.</div>';
 }
+
+document.getElementById('btnUpdateIndic').addEventListener('click', ()=>{
+  const sel = document.getElementById('inSelect');
+  sel.innerHTML = INDICATEURS.map(ind => `<option value="${ind.id}">${ind.libelle}</option>`).join('');
+  if(INDICATEURS[0]){
+    document.getElementById('inValeur').value = INDICATEURS[0].valeur;
+    document.getElementById('inUnite').value = INDICATEURS[0].unite || '';
+  }
+  openModal('modalIndic');
+});
+document.getElementById('inSelect').addEventListener('change', (e)=>{
+  const ind = INDICATEURS.find(x=>String(x.id)===e.target.value);
+  if(ind){
+    document.getElementById('inValeur').value = ind.valeur;
+    document.getElementById('inUnite').value = ind.unite || '';
+  }
+});
+document.getElementById('inSubmit').addEventListener('click', async ()=>{
+  const id = document.getElementById('inSelect').value;
+  const valeur = document.getElementById('inValeur').value.trim();
+  const unite = document.getElementById('inUnite').value.trim();
+  const tendance_type = document.getElementById('inTendanceType').value;
+  const tendanceTxt = document.getElementById('inTendanceTxt').value.trim();
+  if(!valeur){ showToast('Indiquez une valeur.'); return; }
+  if(!dbReady){ showToast('Base non connectée.'); return; }
+  const tendance = tendanceTxt || (tendance_type==='bonne' ? '▲ amélioration' : tendance_type==='mauvaise' ? '▼ dégradation' : '= stable');
+  const { error } = await sb.from('indicateurs').update({ valeur, unite, tendance, tendance_type, updated_at: new Date().toISOString() }).eq('id', id);
+  if(error){ showToast('Erreur : ' + error.message); return; }
+  document.getElementById('inTendanceTxt').value = '';
+  closeModal('modalIndic');
+  showToast('Indicateur mis à jour.');
+  await loadAll();
+});
 
 /* ---------- Équipes ---------- */
 const teamChips = document.getElementById('teamChips');
@@ -983,6 +1117,8 @@ document.querySelectorAll('.chip-suggest').forEach(chip=>{
 });
 
 /* ---------- Démarrage ---------- */
+const reliaLink = document.getElementById('reliaSanteLink');
+if(reliaLink) reliaLink.href = RELIA_SANTE_URL;
 loadAll();
 </script>
 </body>
