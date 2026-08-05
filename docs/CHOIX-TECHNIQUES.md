@@ -1,37 +1,34 @@
 # Choix techniques
 
-## Pourquoi un prototype en HTML/CSS/JavaScript simple
+## Écart assumé par rapport au plan initial (Vite + React)
 
-Le prototype ne dépend d'aucun framework, d'aucune installation, d'aucun serveur. Un fichier `index.html` s'ouvre dans n'importe quel navigateur, sur n'importe quel poste de l'hôpital, sans intervention du service informatique.
+Le README d'origine prévoyait `frontend/` en React avec Vite. Ce projet utilise à la place un fichier HTML/CSS/JavaScript autonome, comme Pulse Qualité. Raison : un délai très court avant présentation, et le besoin de publier sans terminal ni étape de build, directement via GitHub Pages.
 
-Ce choix n'est pas qu'une facilité technique : dans un établissement peu informatisé, la première barrière à un projet numérique est souvent l'installation et la maintenance d'un outil, pas sa conception. Un prototype qu'on peut ouvrir en double-cliquant est un prototype qu'on peut montrer à une équipe soignante, à la direction ou en entretien sans dépendre de personne.
+**Ce que ça coûte** : pas de composants réutilisables, pas de typage, un seul (gros) fichier plutôt qu'une arborescence de composants — moins adapté si l'équipe grandit ou si plusieurs personnes doivent contribuer en parallèle.
 
-## Ce que cette application fait déjà
+**Ce que ça a permis** : livrer une application connectée à une vraie base de données, testable en quelques minutes, sans installation, pendant les jours qui précédaient un entretien.
 
-Elle est connectée à une vraie base de données en ligne (Supabase, un PostgreSQL managé) : les 9 modules lisent et écrivent des données réelles, partagées entre tous les visiteurs du lien. Déclarer un événement, planifier un audit, proposer une idée et voter modifient réellement la base.
+Migrer vers React/Vite reste tout à fait possible ensuite, une fois le modèle de données et les écrans validés avec de vrais utilisateurs — voir `PROCHAINES-ETAPES.md`.
 
-## Ce qu'elle ne fait pas encore
+## Pas de vrai stockage de fichiers
 
-Il n'y a pas de comptes utilisateurs ni de droits d'accès par service : n'importe qui avec le lien peut tout voir et tout modifier. C'est un choix assumé pour tenir un délai court — la [Phase 2 de la roadmap](./ROADMAP.md) prévoit les droits d'accès par service, une fois la Phase 1 validée avec de vraies équipes. Passer à une vraie mise en production supposerait aussi :
+Le module Documents enregistre uniquement des métadonnées (titre, catégorie, taille déclarée, date) — pas de vrai fichier. Stocker de vrais documents médicaux suppose un espace de stockage chiffré, conforme HDS (Hébergement de Données de Santé), ce qui dépasse le cadre d'un prototype de démonstration.
 
-- une base de données pour stocker les indicateurs, événements et actions dans la durée,
-- une gestion des droits d'accès (chaque service ne doit voir que ses propres données, comme décrit dans le module Les équipes),
-- une interface de saisie pour les équipes terrain, pas seulement un tableau de bord de lecture,
-- un hébergement conforme aux exigences de sécurité des données de santé.
+## Pas de comptes utilisateurs
 
-Ces choix seront à faire une fois la Phase 1 de la [feuille de route](./ROADMAP.md) validée avec de vraies données — pas avant, pour éviter d'investir dans une architecture avant de savoir ce qui sera réellement utilisé.
+Comme pour Pulse Qualité, il n'y a pas encore d'authentification : n'importe qui avec le lien et les clés voit et modifie les données du patient de démonstration. **Ce point est bloquant avant toute vraie donnée patient réelle** — voir `PROCHAINES-ETAPES.md`, l'authentification y est explicitement en premier.
 
 ## Structure du dépôt
 
 ```
-pulse-qualite/
-├── README.md                              → vision et présentation du projet
-├── index.html                             → application, connectée à Supabase
-├── database/
-│   └── schema.sql                          → script de création des tables + données de départ
+relia-sante/
+├── README.md
+├── index.html
+├── database/schema.sql
 └── docs/
-    ├── ROADMAP.md                          → déploiement progressif envisagé
-    ├── MODULES.md                          → détail de chaque module et données nécessaires
-    ├── CONFIGURATION-BASE-DE-DONNEES.md    → brancher votre propre base, sans terminal
-    └── CHOIX-TECHNIQUES.md                 → ce document
+    ├── MODELE-DE-DONNEES.md
+    ├── CHOIX-TECHNIQUES.md
+    ├── CONFIGURATION-BASE-DE-DONNEES.md
+    ├── LIEN-PULSE-QUALITE.md
+    └── PROCHAINES-ETAPES.md
 ```

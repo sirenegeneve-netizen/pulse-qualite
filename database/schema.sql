@@ -1,158 +1,185 @@
 -- ============================================================
--- Pulse Qualité — schéma de base de données (Supabase / PostgreSQL)
--- À exécuter une seule fois dans l'éditeur SQL de Supabase
+-- Relia Santé — schéma de base de données (Supabase / PostgreSQL)
+-- Modèle : Patients, Services, Professionnels, Séjours,
+--          Messages, Ressenti (questionnaire à chaud), Événements, Documents
+--
+-- Toutes les tables sont préfixées "relia_" pour ne jamais entrer en
+-- conflit avec celles de Pulse Qualité si les deux applications
+-- partagent le même projet Supabase.
 -- ============================================================
 
--- Services / équipes de l'hôpital, avec statut couleur
-create table services (
-  id text primary key,
+-- Permet de relancer ce script sans erreur si les tables existent déjà
+drop table if exists relia_actions cascade;
+drop table if exists relia_documents cascade;
+drop table if exists relia_evenements cascade;
+drop table if exists relia_ressenti_reponses cascade;
+drop table if exists relia_messages cascade;
+drop table if exists relia_sejour_professionnels cascade;
+drop table if exists relia_sejours cascade;
+drop table if exists relia_professionnels cascade;
+drop table if exists relia_services cascade;
+drop table if exists relia_patients cascade;
+
+create table relia_patients (
+  id bigint generated always as identity primary key,
+  prenom text not null,
   nom text not null,
-  statut text not null check (statut in ('green','orange','red')),
-  satisfaction text,
-  indicateurs text,
-  actions text,
-  audits text,
-  formations text,
-  evenements text,
-  updated_at timestamptz default now()
-);
-
--- Indicateurs qualité du tableau de bord Direction
-create table indicateurs (
-  id bigint generated always as identity primary key,
-  categorie text not null,          -- ex: 'ANQ', 'IQSS', 'Infections', 'Chutes', 'Escarres', 'Douleur', 'Satisfaction', 'Réclamations'
-  libelle text not null,
-  valeur text not null,
-  unite text,
-  tendance text,                     -- ex: '▲ 3 pts vs T-1'
-  tendance_type text check (tendance_type in ('bonne','mauvaise','stable')),
-  updated_at timestamptz default now()
-);
-
--- Gestion des risques : événements indésirables, presque accidents, CAPA
-create table evenements (
-  id bigint generated always as identity primary key,
-  description text not null,
-  service text not null,
-  type text not null default 'indesirable', -- 'indesirable' | 'presque_accident'
-  gravite text not null check (gravite in ('green','orange','red')),
-  statut text default 'Suivi standard',      -- ex: 'ALARM en cours', 'REMED planifiée', 'CAPA clôturée'
+  date_naissance date,
+  email text,
+  avatar text default '🧑',
   created_at timestamptz default now()
 );
 
--- Audits : planification, checklist, statut
-create table audits (
+create table relia_services (
   id bigint generated always as identity primary key,
-  titre text not null,
-  service text,
-  date_prevue date,
-  statut text default 'Planifié' check (statut in ('Planifié','En cours','Terminé')),
-  progression int default 0,          -- % de la checklist validé
+  nom text not null,           -- ex: 'Chirurgie Orthopédique'
+  code text                    -- ex: 'GHOL — Chirurgie'
+);
+
+create table relia_professionnels (
+  id bigint generated always as identity primary key,
+  nom text not null,           -- ex: 'Dr. Martin'
+  role text not null,          -- ex: 'Chirurgien', 'Infirmière', 'Physiothérapeute'
+  avatar text default '🧑‍⚕️',
+  en_ligne boolean default false
+);
+
+create table relia_sejours (
+  id bigint generated always as identity primary key,
+  patient_id bigint references relia_patients(id) on delete cascade,
+  service_id bigint references relia_services(id),
+  chambre text,
+  statut text default 'actuel' check (statut in ('actuel','termine')),
+  etape_actuelle text default 'admission' check (etape_actuelle in ('avant_soins','admission','intervention','reeducation','retour_domicile','suivi_externe','ems','cloture')),
+  date_admission date,
+  date_intervention date,
+  date_reeducation date,
+  date_sortie_prevue date,
+  prochaine_etape text,        -- ex: 'Consultation demain 10h'
   created_at timestamptz default now()
 );
 
--- Voix du patient : satisfaction, compliments, plaintes, idées, témoignages
-create table voix_patient (
+-- Table de liaison : quels relia_professionnels suivent quel séjour
+create table relia_sejour_professionnels (
   id bigint generated always as identity primary key,
-  type text not null check (type in ('satisfaction','compliment','plainte','idee','temoignage')),
+  sejour_id bigint references relia_sejours(id) on delete cascade,
+  professionnel_id bigint references relia_professionnels(id) on delete cascade
+);
+
+create table relia_messages (
+  id bigint generated always as identity primary key,
+  sejour_id bigint references relia_sejours(id) on delete cascade,
+  professionnel_id bigint references relia_professionnels(id),  -- null si le service en général
+  service_nom text,             -- ex: 'Secrétariat Chirurgie'
+  expediteur text not null check (expediteur in ('patient','service')),
   contenu text not null,
-  service text,
-  statut text,                        -- pour les plaintes : 'En traitement' / 'Résolue'
   created_at timestamptz default now()
 );
 
--- Boîte à idées
-create table idees (
+-- Questionnaire de satisfaction "à chaud" simplifié : le check-in "Mon ressenti"
+create table relia_ressenti_reponses (
   id bigint generated always as identity primary key,
-  titre text not null,
-  auteur text default 'Anonyme',
-  votes int default 1,
+  sejour_id bigint references relia_sejours(id) on delete cascade,
+  reponse text not null check (reponse in ('ca_va','question','besoin_aide')),
   created_at timestamptz default now()
 );
 
--- Les réussites
-create table reussites (
+-- Événements remontés par le patient ou son entourage (relié à la gestion des
+-- risques de Pulse Qualité dans une prochaine étape — voir docs/LIEN-PULSE-QUALITE.md)
+create table relia_evenements (
   id bigint generated always as identity primary key,
-  icone text default '🎉',
+  sejour_id bigint references relia_sejours(id) on delete cascade,
+  description text not null,
+  gravite text default 'green' check (gravite in ('green','orange','red')),
+  created_at timestamptz default now()
+);
+
+-- "Mes actions" : ce que le patient a concrètement à faire dans son parcours
+create table relia_actions (
+  id bigint generated always as identity primary key,
+  sejour_id bigint references relia_sejours(id) on delete cascade,
+  titre text not null,           -- ex: 'Envoyer document assurance accident'
+  echeance date,
+  responsable text default 'Vous',
+  statut text default 'a_faire' check (statut in ('a_faire','fait')),
+  created_at timestamptz default now()
+);
+
+create table relia_documents (
+  id bigint generated always as identity primary key,
+  sejour_id bigint references relia_sejours(id) on delete cascade,
   titre text not null,
-  description text,
+  categorie text default 'Compte-rendus' check (categorie in ('Compte-rendus','Ordonnances','Résultats','Sortie')),
+  taille_kb int,
+  date_doc date,
   created_at timestamptz default now()
 );
 
 -- ============================================================
--- Sécurité : pas de comptes utilisateurs pour l'instant (voir ROADMAP.md,
--- Phase 2). On autorise la lecture/écriture publique via la clé "anon"
--- pour que la démo fonctionne sans backend supplémentaire.
+-- Sécurité : comme pour Pulse Qualité, pas de comptes utilisateurs
+-- pour l'instant (V0.1 démonstration). Accès public en lecture/écriture
+-- via la clé publique, à restreindre avant toute vraie donnée patient.
 -- ============================================================
-alter table services enable row level security;
-alter table indicateurs enable row level security;
-alter table evenements enable row level security;
-alter table audits enable row level security;
-alter table voix_patient enable row level security;
-alter table idees enable row level security;
-alter table reussites enable row level security;
+alter table relia_patients enable row level security;
+alter table relia_actions enable row level security;
+alter table relia_services enable row level security;
+alter table relia_professionnels enable row level security;
+alter table relia_sejours enable row level security;
+alter table relia_sejour_professionnels enable row level security;
+alter table relia_messages enable row level security;
+alter table relia_ressenti_reponses enable row level security;
+alter table relia_evenements enable row level security;
+alter table relia_documents enable row level security;
 
-create policy "public read/write services" on services for all using (true) with check (true);
-create policy "public read/write indicateurs" on indicateurs for all using (true) with check (true);
-create policy "public read/write evenements" on evenements for all using (true) with check (true);
-create policy "public read/write audits" on audits for all using (true) with check (true);
-create policy "public read/write voix_patient" on voix_patient for all using (true) with check (true);
-create policy "public read/write idees" on idees for all using (true) with check (true);
-create policy "public read/write reussites" on reussites for all using (true) with check (true);
+create policy "public read/write relia_patients" on relia_patients for all using (true) with check (true);
+create policy "public read/write relia_actions" on relia_actions for all using (true) with check (true);
+create policy "public read/write relia_services" on relia_services for all using (true) with check (true);
+create policy "public read/write relia_professionnels" on relia_professionnels for all using (true) with check (true);
+create policy "public read/write relia_sejours" on relia_sejours for all using (true) with check (true);
+create policy "public read/write relia_sejour_professionnels" on relia_sejour_professionnels for all using (true) with check (true);
+create policy "public read/write relia_messages" on relia_messages for all using (true) with check (true);
+create policy "public read/write relia_ressenti_reponses" on relia_ressenti_reponses for all using (true) with check (true);
+create policy "public read/write relia_evenements" on relia_evenements for all using (true) with check (true);
+create policy "public read/write relia_documents" on relia_documents for all using (true) with check (true);
 
 -- ============================================================
--- Données de départ
+-- Données de démonstration (reprennent le prototype visuel fourni)
 -- ============================================================
 
-insert into services (id, nom, statut, satisfaction, indicateurs, actions, audits, formations, evenements) values
-('urgences','Urgences','orange','88%','Délai d''attente moyen : 42 min (+18)','3 en cours','1 audit en cours','Formation triage — 80%','1 événement cette semaine'),
-('chirurgie','Chirurgie','red','90%','Taux d''infection post-op : 1.4%','5 en cours','Audit hygiène bloc en cours','Formation identitovigilance — 60%','1 ALARM en cours'),
-('maternite','Maternité','green','98%','Chutes : 0','1 en cours','Aucun audit en cours','À jour','120 jours sans chute'),
-('geriatrie','Gériatrie','green','95%','Chutes : 0.5 / 1000 j','2 en cours','Audit dossier patient prévu','Formation douleur — 100%','Aucun événement'),
-('pediatrie','Pédiatrie','green','97%','Satisfaction : 97%','0 en cours','Aucun audit en cours','À jour','Aucun événement'),
-('medecine-interne','Médecine interne','orange','91%','Escarres : 2.1%','4 en cours','Audit prévention escarres prévu','Formation prévention — 45%','2 presque accidents'),
-('bloc','Bloc opératoire','green','—','Checklist : 100%','0 en cours','—','—','Aucun'),
-('pharmacie','Pharmacie','green','—','Ruptures : 1 en cours','1 en cours','—','—','0 ce mois');
+insert into relia_patients (prenom, nom, date_naissance, email, avatar) values
+('Nathalie', 'D.', '1982-05-14', 'n.dhulster@email.com', '👩🏾');
 
-insert into indicateurs (categorie, libelle, valeur, unite, tendance, tendance_type) values
-('ANQ','Indicateurs ANQ','87','/100','▲ 3 pts vs T-1','bonne'),
-('IQSS','IQSS','A','classe','= stable','stable'),
-('Infections','Infections associées aux soins','0.8','%','▼ 0.2 pt','bonne'),
-('Chutes','Chutes','3','/1000 j.','▲ 1 vs mois dernier','mauvaise'),
-('Escarres','Escarres','1.2','%','▼ 0.4 pt','bonne'),
-('Douleur','Douleur maîtrisée','91','%','= stable','stable'),
-('Satisfaction','Satisfaction globale','96','%','▲ 2 pts','bonne'),
-('Réclamations','Réclamations','14','ce mois','▼ 5','bonne');
+insert into relia_services (nom, code) values
+('Chirurgie Orthopédique', 'GHOL — Chirurgie');
 
-insert into evenements (description, service, type, gravite, statut) values
-('Erreur d''identitovigilance','Chirurgie','indesirable','red','ALARM en cours'),
-('Chute avec conséquence mineure','Gériatrie','indesirable','orange','REMED planifiée'),
-('Presque accident médicamenteux','Pharmacie','presque_accident','green','CAPA clôturée');
+insert into relia_professionnels (nom, role, avatar, en_ligne) values
+('Dr. Martin', 'Chirurgien', '👨‍⚕️', true),
+('Mme. Lefebvre', 'Infirmière', '👩‍⚕️', true),
+('Mr. Dubois', 'Physiothérapeute', '🧑‍⚕️', false),
+('Secrétariat Chirurgie', 'Secrétariat', '🧑‍💼', true);
 
-insert into audits (titre, service, date_prevue, statut, progression) values
-('Circuit du médicament','Pharmacie','2026-08-12','Planifié',0),
-('Hygiène des mains — Urgences','Urgences','2026-08-19','Planifié',0),
-('Dossier patient informatisé','Direction','2026-08-26','Planifié',0),
-('Hygiène — Bloc opératoire','Bloc opératoire',null,'En cours',78);
+insert into relia_sejours (patient_id, service_id, chambre, statut, etape_actuelle, date_admission, date_intervention, date_reeducation, date_sortie_prevue, prochaine_etape) values
+(1, 1, '214', 'actuel', 'reeducation', '2026-10-12', '2026-10-13', '2026-10-16', '2026-10-18', 'Consultation demain 10h');
 
-insert into voix_patient (type, contenu, service, statut) values
-('compliment','Personnel très à l''écoute en Pédiatrie','Pédiatrie',null),
-('compliment','Prise en charge rapide aux Urgences','Urgences',null),
-('compliment','Merci à l''équipe de nuit en Chirurgie','Chirurgie',null),
-('plainte','Temps d''attente jugé trop long','Urgences','En traitement'),
-('plainte','Erreur de facturation','Administration','Résolue'),
-('temoignage','Trois semaines d''hospitalisation, et jamais je ne me suis sentie seule. L''équipe de Gériatrie a un vrai sens de l''humain.','Gériatrie',null);
+insert into relia_sejour_professionnels (sejour_id, professionnel_id) values
+(1,1), (1,2), (1,3);
 
-insert into idees (titre, auteur, votes) values
-('Écrans d''attente avec temps estimé aux Urgences','Équipe Urgences',34),
-('Chariot de soins avec check-list intégrée','Équipe Chirurgie',27),
-('Application mobile pour signaler un événement en 1 clic','Direction qualité',21),
-('Salle de repos dédiée pour les familles en Gériatrie','Équipe Gériatrie',15);
+insert into relia_messages (sejour_id, professionnel_id, service_nom, expediteur, contenu, created_at) values
+(1, 4, 'Secrétariat Chirurgie', 'service', 'Votre dossier d''admission est complet.', now() - interval '2 days'),
+(1, 4, 'Secrétariat Chirurgie', 'service', 'Bonjour Nathalie, avez-vous bien reçu les consignes pour votre sortie ?', now() - interval '1 day 7 hours'),
+(1, 4, 'Secrétariat Chirurgie', 'patient', 'Oui, merci. J''ai une question concernant l''ordonnance.', now() - interval '1 day 6 hours 35 minutes'),
+(1, 4, 'Secrétariat Chirurgie', 'service', 'Je vous envoie le document complémentaire.', now() - interval '5 hours');
 
-insert into reussites (icone, titre, description) values
-('🛡️','120','jours sans chute — Maternité'),
-('🏆','Gériatrie','Service du mois'),
-('✅','Circuit du médicament','Projet terminé'),
-('👏','Bloc opératoire','Bravo sécurité'),
-('💌','17','compliments patients aujourd''hui'),
-('🎯','96 %','objectif satisfaction atteint');
+insert into relia_actions (sejour_id, titre, echeance, responsable, statut) values
+(1, 'Confirmer le rendez-vous de physiothérapie', '2026-10-17', 'Vous', 'a_faire'),
+(1, 'Transmettre l''attestation d''assurance accident', '2026-10-16', 'Vous', 'a_faire'),
+(1, 'Préparer le retour à domicile', '2026-10-18', 'Vous', 'a_faire'),
+(1, 'Compléter le questionnaire préopératoire', '2026-10-11', 'Vous', 'fait');
+
+insert into relia_evenements (sejour_id, description, gravite) values
+(1, 'Douleur légère persistante au niveau du pansement', 'orange');
+
+insert into relia_documents (sejour_id, titre, categorie, taille_kb, date_doc) values
+(1, 'Lettre de sortie - Chirurgie', 'Sortie', 1200, '2026-10-15'),
+(1, 'Ordonnance post-opératoire', 'Ordonnances', 450, '2026-10-14'),
+(1, 'Compte-rendu opératoire', 'Compte-rendus', 2800, '2026-10-13');
