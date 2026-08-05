@@ -1,50 +1,60 @@
-# Relia Santé
+# Pulse Qualité
 
-Plateforme d'expérience patient — accompagne le patient de la préadmission au retour à domicile, pour renforcer la qualité, la sécurité et la continuité des soins.
+Une plateforme qui centralise toutes les informations liées à la qualité, transforme les données en décisions et facilite l'amélioration continue — au bénéfice des patients et des professionnels.
 
-## Parcours patient
+> Projet conçu pour un contexte hospitalier peu informatisé : la priorité n'est pas la complexité technique, mais la capacité à rendre visible, en un coup d'œil, ce qui aujourd'hui reste dispersé entre tableurs, classeurs papier et boîtes mail.
 
-Préadmission → Admission → Hospitalisation → Sortie → Retour à domicile → Clôture
+## Pourquoi ce projet
 
-## Utilisateurs
+Dans beaucoup d'établissements, l'information qualité existe — indicateurs ANQ, IQSS, événements indésirables, satisfaction patient — mais elle est éclatée entre plusieurs outils, mise à jour manuellement, et rarement lue par tout le monde en même temps. Résultat : les décisions arrivent en retard, et le travail des équipes qui font bien les choses passe inaperçu.
 
-Patient, proche aidant, secrétaire, infirmier(ère), médecin, service qualité, professionnels externes (médecin traitant, infirmier libéral, pharmacien, kinésithérapeute).
+Pulse Qualité part d'un principe simple : **une seule page doit suffire pour savoir comment va l'hôpital aujourd'hui.**
 
-*Cette version couvre le point de vue du patient. Le tableau de bord équipe (service qualité, soignants) est une prochaine étape — voir [`docs/PROCHAINES-ETAPES.md`](./docs/PROCHAINES-ETAPES.md).*
+## Aperçu de l'application
 
-## État d'avancement
+L'application est disponible dans [`index.html`](./index.html) — un site autonome qui se connecte à une vraie base de données en ligne (Supabase/PostgreSQL). Les 9 modules lisent et écrivent des données réelles, partagées entre tous ceux qui ouvrent le lien : déclarer un événement, planifier un audit, proposer une idée et voter sont de vraies actions, enregistrées en base.
 
-**v0.2 — Application connectée à une vraie base de données**, avec 5 écrans patient :
-- 🏠 **Accueil** : parcours de soin en un coup d'œil, accès rapide aux modules
-- 🗺️ **Parcours** : timeline visuelle du séjour, équipe soignante, check-in "Mon ressenti"
-- 💬 **Messages** : messagerie sécurisée avec le service (réelle, persistée en base)
-- 📄 **Documents** : coffre-fort de documents (métadonnées réelles, pas de vrai fichier stocké dans cette version)
-- 👤 **Profil** : informations patient, modifiables
+Ce que ce n'est **pas** (encore) : un système avec des comptes utilisateurs par service — n'importe qui avec le lien peut tout voir et tout modifier. C'est un choix assumé pour aller vite ; la Phase 2 de la [roadmap](./docs/ROADMAP.md) prévoit les droits d'accès par service.
 
-Déclarer un ressenti, envoyer un message, ajouter un document et modifier son profil sont de vraies actions, enregistrées dans une base partagée.
+**Pour connecter votre propre base** : voir [`docs/CONFIGURATION-BASE-DE-DONNEES.md`](./docs/CONFIGURATION-BASE-DE-DONNEES.md) — 3 étapes, aucun terminal requis.
 
-## Pourquoi ce choix technique (et pas Vite + React comme prévu initialement)
+## Les modules
 
-Le plan initial prévoyait un frontend React avec Vite. Compte tenu d'un délai très court avant présentation, nous avons choisi la même approche que pour Pulse Qualité : un fichier HTML autonome, connecté directement à Supabase, sans étape de build ni terminal. Ça permet d'itérer vite et de publier via GitHub Pages en quelques clics. Voir [`docs/CHOIX-TECHNIQUES.md`](./docs/CHOIX-TECHNIQUES.md) pour le détail et pour ce qu'il faudrait changer avant une vraie mise en production.
+| Module | Ce qu'il fait |
+|---|---|
+| 🏥 Tableau de bord Direction | Tous les indicateurs qualité (ANQ, IQSS, infections, chutes, escarres, douleur, satisfaction, réclamations, audits, plans d'action, alertes) sur une seule page |
+| 👩‍⚕️ Les équipes | Chaque service voit uniquement ses propres indicateurs, actions, audits, formations et événements, avec un code couleur simple |
+| 😊 Voix du patient | Satisfaction, compliments, plaintes, idées, témoignages — pas seulement les réclamations |
+| ⚠️ Gestion des risques | Événements indésirables, presque accidents, analyses ALARM/REMED, causes profondes, CAPA, suivi automatique |
+| 📋 Audits | Planification, checklist numérique, rapports automatiques, suivi des actions |
+| 📈 Qualité en temps réel | Une carte de l'hôpital : chaque service en 🟢 stable, 🟠 vigilance ou 🔴 priorité |
+| 💡 Boîte à idées | Chaque collaborateur propose une amélioration, les collègues votent, les meilleures sont testées |
+| 🤖 IA Qualité | Résumer un audit, rédiger un compte-rendu, proposer une CAPA, rechercher une norme ou une procédure |
+| 🎉 Les réussites | Mettre en avant ce qui fonctionne : jours sans chute, service du mois, projets terminés, compliments patients |
 
-## Structure du dépôt
+**L'idée la plus innovante** : la page *"Le patient aujourd'hui"* — un résumé quotidien qui permet à la direction de connaître l'état de l'hôpital en 30 secondes, sans naviguer dans dix écrans différents.
+
+## Où en est le projet
+
+Ceci est un prototype de vision, pas encore un outil connecté aux vrais systèmes de l'hôpital. Il sert à :
+1. valider que l'organisation de l'information a du sens pour les équipes terrain,
+2. servir de support de discussion avec la direction pour prioriser les premiers modules,
+3. poser une structure de projet claire pour la suite (voir [`docs/ROADMAP.md`](./docs/ROADMAP.md)).
+
+## Documentation du projet
+
+- [`docs/ROADMAP.md`](./docs/ROADMAP.md) — comment ce projet pourrait être déployé étape par étape dans un hôpital réel
+- [`docs/MODULES.md`](./docs/MODULES.md) — description détaillée de chaque module et des données qu'il suppose de collecter
+- [`docs/CHOIX-TECHNIQUES.md`](./docs/CHOIX-TECHNIQUES.md) — pourquoi ces choix techniques, pensés pour un contexte peu informatisé
+
+## Lancer le prototype
+
+Aucune installation nécessaire :
 
 ```
-relia-sante/
-├── README.md
-├── index.html                  → application patient, connectée à Supabase
-├── database/
-│   └── schema.sql               → modèle de données complet + données de démonstration
-└── docs/
-    ├── MODELE-DE-DONNEES.md     → détail des entités (Patients, Séjours, Services, Professionnels, Messages, Ressenti, Événements, Documents)
-    ├── CHOIX-TECHNIQUES.md      → justification des choix techniques
-    ├── CONFIGURATION-BASE-DE-DONNEES.md → connecter votre base, sans terminal
-    ├── LIEN-PULSE-QUALITE.md    → comment lier plus tard cette application à Pulse Qualité
-    ├── VISION-STRATEGIQUE.md    → le jumeau numérique du parcours patient
-    ├── EVOLUTIONS-PROPOSEES.md  → traduction de la vision en étapes concrètes
-    └── PROCHAINES-ETAPES.md     → authentification, tableau de bord équipe, etc.
+git clone <url-du-repo>
+cd pulse-qualite
+# ouvrir index.html dans un navigateur
 ```
 
-## Lancer l'application
-
-Aucune installation : ouvrez `index.html` dans un navigateur, ou publiez-le via GitHub Pages (voir `docs/CONFIGURATION-BASE-DE-DONNEES.md`).
+Ou, si le dépôt est publié via GitHub Pages, simplement en ouvrant le lien fourni par GitHub.
