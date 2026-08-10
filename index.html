@@ -644,8 +644,8 @@
    Remplacez les deux valeurs ci-dessous par celles de votre projet :
    Project Settings → API → Project URL / anon public key
    ============================================================ */
-const SUPABASE_URL = 'https://vblfvrrukvfrzwtqgboo.supabase.co';
-const SUPABASE_ANON_KEY = 'sb_publishable_h3Ka1v4ZqUuk-F0o8s0tpA_-T-62hg0';
+const SUPABASE_URL = 'VOTRE_SUPABASE_URL';
+const SUPABASE_ANON_KEY = 'VOTRE_SUPABASE_ANON_KEY';
 
 /* Lien vers la plateforme Relia Santé (anciennement Synapath), utilisée pour
    les résultats détaillés de satisfaction patient. Remplacez par l'URL réelle
@@ -951,15 +951,17 @@ function renderRisks(){
 async function loadReliaSignaux(){
   const box = document.getElementById('reliaSignauxList');
   try{
-    const [ev, rr] = await Promise.all([
+    const [ev, rr, sg] = await Promise.all([
       sb.from('relia_evenements').select('*').order('created_at',{ascending:false}),
       sb.from('relia_ressenti_reponses').select('*').eq('reponse','besoin_aide').order('created_at',{ascending:false}),
+      sb.from('relia_signalements').select('*').order('created_at',{ascending:false}),
     ]);
-    if(ev.error || rr.error) throw (ev.error || rr.error);
+    if(ev.error || rr.error || sg.error) throw (ev.error || rr.error || sg.error);
 
     const signaux = [
       ...ev.data.map(e=>({ desc: e.description, gravite: e.gravite, when: e.created_at })),
       ...rr.data.map(r=>({ desc: 'Un patient a signalé avoir besoin d\'aide', gravite: 'orange', when: r.created_at })),
+      ...sg.data.map(s=>({ desc: `Signalement patient — ${s.categorie}${s.message ? ' : '+s.message : ''}`, gravite: s.categorie==='Douleur'?'orange':'orange', when: s.created_at })),
     ].sort((a,b)=> new Date(b.when) - new Date(a.when));
 
     if(!signaux.length){ box.innerHTML = '<div class="empty-row">Aucun signal remonté par Relia Santé pour le moment.</div>'; return; }
