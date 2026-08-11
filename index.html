@@ -196,6 +196,9 @@
   .field input, .field select, .field textarea{ width:100%; border:1px solid var(--line); border-radius:9px; padding:9px 11px; font-size:13.5px; font-family:inherit; }
   .field input:focus, .field select:focus, .field textarea:focus{ outline:none; border-color:var(--teal); }
   .field textarea{ resize:vertical; min-height:70px; }
+  .concerne-grid{ display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-top:6px; }
+  .concerne-grid label{ display:flex; align-items:center; gap:8px; font-weight:500; font-size:13px; background:var(--surface-2); padding:8px 10px; border-radius:8px; }
+  .concerne-grid input{ width:auto; }
   .modal-actions{ display:flex; justify-content:flex-end; gap:8px; margin-top:18px; }
   .toast{ position:fixed; bottom:22px; left:50%; transform:translateX(-50%) translateY(20px); background:var(--teal-deep); color:#fff; padding:11px 18px; border-radius:10px; font-size:13px; font-weight:600; opacity:0; pointer-events:none; transition:opacity .2s, transform .2s; z-index:60; box-shadow:var(--shadow); }
   .toast.show{ opacity:1; transform:translateX(-50%) translateY(0); }
@@ -269,37 +272,6 @@
     .clock{ text-align:left; }
     .section-head{ align-items:flex-start; }
   }
-
-  /* ===== Module Mesures & indicateurs ===== */
-  .mpanel{ display:none; } .mpanel.active{ display:block; }
-  .pq-steps{ display:flex; flex-wrap:wrap; gap:6px; margin:4px 0 16px; }
-  .pq-step{ font-size:11.5px; font-weight:600; padding:5px 11px; border-radius:20px; background:var(--surface-2); color:var(--ink-faint); }
-  .pq-step.done{ background:var(--teal-tint); color:var(--teal-deep); }
-  .pq-step.on{ background:var(--teal); color:#fff; }
-  .pq-choice{ display:grid; grid-template-columns:repeat(auto-fill,minmax(210px,1fr)); gap:10px; }
-  .pq-opt{ all:unset; border:1px solid var(--line); border-radius:12px; padding:14px; font-size:13.5px; font-weight:600; background:var(--surface); display:flex; flex-direction:column; gap:5px; }
-  .pq-opt small{ font-weight:500; font-size:11.5px; color:var(--ink-faint); }
-  .pq-opt:hover{ border-color:var(--teal); background:var(--teal-tint); }
-  .pq-opt.disabled{ opacity:.45; cursor:not-allowed; }
-  .pq-form-grid{ display:grid; grid-template-columns:repeat(auto-fill,minmax(260px,1fr)); gap:12px; margin-top:6px; }
-  .pq-f{ display:flex; flex-direction:column; gap:5px; font-size:12.5px; }
-  .pq-f > span{ font-weight:600; color:var(--ink-soft); line-height:1.35; }
-  .pq-f small{ color:var(--ink-faint); font-size:11px; }
-  .pq-f input, .pq-f select, .pq-f textarea{ font-family:inherit; font-size:13px; padding:8px 10px; border:1px solid var(--line); border-radius:9px; background:var(--surface); color:var(--ink); width:100%; }
-  .pq-f input:focus, .pq-f select:focus, .pq-f textarea:focus{ outline:2px solid var(--teal-tint); border-color:var(--teal); }
-  .pq-placeholder > span{ color:var(--amber); }
-  .pq-req{ font-style:normal; font-size:10px; color:var(--red); text-transform:uppercase; letter-spacing:.04em; margin-left:4px; }
-  .pq-actions{ display:flex; gap:8px; margin-top:14px; flex-wrap:wrap; }
-  .pq-hint{ font-size:11.5px; color:var(--ink-faint); margin-top:10px; }
-  .pq-meta{ display:grid; grid-template-columns:repeat(auto-fill,minmax(160px,1fr)); gap:10px; background:var(--surface-2); border-radius:12px; padding:12px 14px; margin:6px 0 14px; }
-  .pq-meta span{ display:block; font-size:10.5px; text-transform:uppercase; letter-spacing:.05em; color:var(--ink-faint); }
-  .pq-meta strong{ font-size:13px; }
-  .pq-footer{ display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:12px; margin-top:18px; padding-top:14px; border-top:1px solid var(--line); font-size:13px; }
-  .pq-table{ display:flex; flex-direction:column; }
-  .pq-tr{ display:grid; grid-template-columns:1.4fr 1fr 1fr 1fr 1fr .7fr; gap:10px; padding:10px 0; border-top:1px solid var(--line); font-size:12.5px; align-items:center; }
-  .pq-th{ border-top:none; font-weight:700; font-size:11px; text-transform:uppercase; letter-spacing:.05em; color:var(--ink-faint); }
-  @media (max-width:700px){ .pq-tr{ grid-template-columns:1fr 1fr; } .pq-footer{ flex-direction:column; align-items:flex-start; } }
-
 </style>
 </head>
 <body>
@@ -324,7 +296,7 @@
     <div class="nav-group-label">Pilotage</div>
     <ul class="nav">
       <li><button data-target="dashboard"><span class="ic">🏥</span><span class="label">Tableau de bord</span></button></li>
-      <li><button data-target="measures"><span class="ic">🧮</span><span class="label">Mesures &amp; indicateurs</span></button></li>
+      <li><button data-target="mesures"><span class="ic">📐</span><span class="label">Mesures &amp; indicateurs</span></button></li>
       <li><button data-target="teams"><span class="ic">👩‍⚕️</span><span class="label">Les équipes</span></button></li>
       <li><button data-target="map"><span class="ic">📈</span><span class="label">Qualité en temps réel</span></button></li>
     </ul>
@@ -404,6 +376,39 @@
       </div>
     </section>
 
+    <section class="section" id="mesures">
+      <div class="section-head">
+        <div>
+          <div class="eyebrow">Pilotage</div>
+          <h1 class="section-title">Mesures &amp; indicateurs</h1>
+          <p class="section-desc">Moteur générique de saisie, calcul et traçabilité — preuve de concept.</p>
+        </div>
+        <button class="btn btn-sm" id="btnNewMeasure">+ Nouvelle mesure</button>
+      </div>
+
+      <div class="setup-banner" style="background:var(--teal-tint);border-color:var(--teal);color:var(--teal-deep);">
+        ℹ️ L'instrument disponible ici est un <strong>exemple fictif</strong> destiné à démontrer le fonctionnement du moteur (formulaire généré dynamiquement, calcul automatique, référence unique, traçabilité). Ce n'est pas un instrument ANQ officiel — voir <code>docs/PLAN-MESURES-INDICATEURS.md</code>.
+      </div>
+
+      <div class="grid grid-3" style="margin:16px 0;">
+        <div class="card kpi"><div class="kpi-label">Mesures enregistrées</div><div class="kpi-value" id="mesScoreCount">0</div></div>
+        <div class="card kpi"><div class="kpi-label">Score moyen</div><div class="kpi-value" id="mesScoreAvg">—</div></div>
+        <div class="card kpi"><div class="kpi-label">Instruments actifs</div><div class="kpi-value">1</div></div>
+      </div>
+
+      <div class="card" style="margin-bottom:16px;">
+        <div class="card-title">Instruments</div>
+        <div class="card-sub">Référentiel — configurable, sans code spécifique par instrument</div>
+        <div id="instrumentList"></div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Mesures enregistrées</div>
+        <div class="card-sub">Chaque ligne peut être remontée jusqu'à ses réponses sources</div>
+        <div id="measurementList"></div>
+      </div>
+    </section>
+
     <section class="section" id="dashboard">
       <div class="section-head">
         <div>
@@ -435,63 +440,6 @@
           <div class="list-row"><span class="dot dot-red"></span><span class="name">Rupture stock — solution hydro-alcoolique</span></div>
           <div class="list-row"><span class="dot dot-orange"></span><span class="name">Urgences — délai d'attente en hausse</span></div>
         </div>
-      </div>
-    </section>
-
-    <section class="section" id="measures">
-      <div class="section-head">
-        <div>
-          <div class="eyebrow">Pilotage</div>
-          <h1 class="section-title">Mesures &amp; indicateurs</h1>
-          <p class="section-desc">Moteur générique de collecte : instruments configurables, formulaires dynamiques, calcul automatique des scores et des indicateurs, traçabilité complète.</p>
-        </div>
-        <button class="btn" id="btnNewMeasure">+ Nouvelle mesure</button>
-      </div>
-
-      <div id="pqBanner"></div>
-
-      <div class="tabs" id="mTabs">
-        <button class="tab active" data-mtab="new">Nouvelle mesure</button>
-        <button class="tab" data-mtab="current">Mesures en cours</button>
-        <button class="tab" data-mtab="history">Historique</button>
-        <button class="tab" data-mtab="indicators">Indicateurs</button>
-        <button class="tab" data-mtab="instruments">Instruments</button>
-        <button class="tab" data-mtab="referentials">Référentiels</button>
-        <button class="tab" data-mtab="quality">Qualité des données</button>
-      </div>
-
-      <div class="mpanel active" data-mpanel="new">
-        <div class="card" id="wizardCard">
-          <div class="card-title">Assistant de saisie</div>
-          <div class="card-sub">Contexte → domaine → instrument → moment → formulaire dynamique</div>
-          <div id="wizardSteps"></div>
-          <div id="wizardBody"></div>
-        </div>
-      </div>
-
-      <div class="mpanel" data-mpanel="current">
-        <div class="card"><div class="card-title">Mesures en cours</div><div class="card-sub">Brouillons et saisies non validées</div><div id="listCurrent"></div></div>
-      </div>
-
-      <div class="mpanel" data-mpanel="history">
-        <div class="card"><div class="card-title">Historique des mesures validées</div><div class="card-sub">Une mesure validée n'est jamais supprimée : elle est archivée et journalisée</div><div id="listHistory"></div></div>
-      </div>
-
-      <div class="mpanel" data-mpanel="indicators">
-        <div class="grid grid-3" id="indicatorGrid"></div>
-      </div>
-
-      <div class="mpanel" data-mpanel="instruments">
-        <div class="card"><div class="card-title">Référentiel des instruments</div><div class="card-sub">Contenus officiels non reproduits : items en placeholder tant que la source autorisée n'est pas fournie</div><div id="instrTable"></div></div>
-      </div>
-
-      <div class="mpanel" data-mpanel="referentials">
-        <div class="card"><div class="card-title">Versions d'instruments</div><div class="card-sub">Une version utilisée n'est jamais modifiée rétroactivement</div><div id="versionTable"></div></div>
-      </div>
-
-      <div class="mpanel" data-mpanel="quality">
-        <div class="grid grid-3" id="dqGrid"></div>
-        <div class="card" style="margin-top:14px;"><div class="card-title">Journal d'audit</div><div class="card-sub">CREATE / UPDATE / VALIDATE / REJECT / ARCHIVE</div><div id="auditLogList"></div></div>
       </div>
     </section>
 
@@ -547,10 +495,22 @@
           <h1 class="section-title">Gestion des risques</h1>
           <p class="section-desc">Événements indésirables, presque accidents, analyses et CAPA — avec suivi automatique.</p>
         </div>
-        <button class="btn btn-sm" id="btnDeclareEvent">Déclarer un événement</button>
+        <button class="btn btn-sm" id="btnDeclareEvent">Déclarer un événement (qualifié)</button>
+      </div>
+
+      <div class="card" style="margin-bottom:16px;background:linear-gradient(135deg, var(--surface), var(--teal-tint));">
+        <div class="card-title" style="font-size:16px;">Vous avez vu ou vécu quelque chose ?</div>
+        <p style="font-size:13px;color:var(--ink-soft);margin-bottom:14px;max-width:520px;">Vous n'avez pas besoin de connaître le vocabulaire qualité. Décrivez simplement la situation, avec vos propres mots — Pulse Qualité s'occupe du reste.</p>
+        <button class="btn" id="btnDeclarationUniverselle">🚨 Faire un signalement</button>
       </div>
 
       <div class="grid grid-4" id="riskKpis" style="margin-bottom:16px;"></div>
+
+      <div class="card" style="margin-bottom:16px;">
+        <div class="card-title">Mes signalements</div>
+        <div class="card-sub">Déclaration libre — la qualification qualité vient après, elle n'est jamais demandée au déclarant</div>
+        <div id="declarationsList"></div>
+      </div>
 
       <div class="card">
         <div class="card-title">Suivi des événements</div>
@@ -651,12 +611,110 @@
   </main>
 </div>
 
-<div class="modal-overlay" id="modalDetail">
-  <div class="modal" style="max-width:720px;max-height:82vh;overflow:auto;">
-    <div class="card-title" style="margin-bottom:2px;">Pourquoi ce chiffre ?</div>
-    <div class="card-sub">Traçabilité complète : formule, numérateur, dénominateur et données sources</div>
-    <div id="pqDetailBody"></div>
-    <div class="pq-actions"><button class="btn btn-ghost btn-sm" data-close-modal>Fermer</button></div>
+<div class="modal-overlay" id="modalDeclaration">
+  <div class="modal" style="max-width:520px;">
+    <h3>Faire un signalement</h3>
+    <p class="hint">Vous n'avez pas besoin de déterminer vous-même la gravité ou la catégorie. Votre signalement sert à améliorer la sécurité et l'organisation des soins.</p>
+
+    <div class="field">
+      <label>Si vous savez de quoi il s'agit (facultatif)</label>
+      <select id="declCategorie">
+        <option value="">Je ne sais pas dans quelle catégorie</option>
+        <option>Quelque chose qui s'est passé</option>
+        <option>Une situation à risque</option>
+        <option>Un presque accident</option>
+        <option>Un problème avec un médicament</option>
+        <option>Un problème avec un dispositif</option>
+        <option>Un problème informatique / numérique</option>
+      </select>
+    </div>
+
+    <div class="field">
+      <label>Que s'est-il passé ?</label>
+      <textarea id="declDescription" placeholder="Exemple : « Le patient a failli tomber en sortant de la douche, mais je l'ai rattrapé. »"></textarea>
+    </div>
+
+    <div class="field">
+      <label>Quand cela s'est-il passé ?</label>
+      <div style="display:flex;gap:8px;">
+        <input type="date" id="declDate" style="flex:1;">
+        <input type="time" id="declHeure" style="flex:1;">
+      </div>
+      <label style="display:flex;align-items:center;gap:8px;font-weight:500;margin-top:8px;">
+        <input type="checkbox" id="declQuandInconnu" style="width:auto;"> Je ne sais pas exactement
+      </label>
+    </div>
+
+    <div class="field">
+      <label>Qui ou quoi était concerné ? (plusieurs choix possibles)</label>
+      <div class="concerne-grid">
+        <label><input type="checkbox" value="Patient"> Patient</label>
+        <label><input type="checkbox" value="Professionnel"> Professionnel</label>
+        <label><input type="checkbox" value="Visiteur"> Visiteur</label>
+        <label><input type="checkbox" value="Médicament"> Médicament</label>
+        <label><input type="checkbox" value="Dispositif médical"> Dispositif médical</label>
+        <label><input type="checkbox" value="Informatique"> Informatique</label>
+        <label><input type="checkbox" value="Organisation"> Organisation</label>
+        <label><input type="checkbox" value="Locaux"> Locaux</label>
+      </div>
+    </div>
+
+    <div class="field">
+      <label>Y a-t-il eu une conséquence ?</label>
+      <select id="declConsequence">
+        <option value="aucune">Aucune conséquence</option>
+        <option value="legere">Une conséquence légère</option>
+        <option value="prise_en_charge">Une conséquence nécessitant une prise en charge</option>
+        <option value="grave">Une conséquence importante ou grave</option>
+        <option value="je_ne_sais_pas" selected>Je ne sais pas</option>
+      </select>
+    </div>
+
+    <div class="field">
+      <label>Que s'est-il passé immédiatement après ? (facultatif)</label>
+      <textarea id="declMesures" placeholder="Ex : patient surveillé, médecin prévenu, matériel retiré…"></textarea>
+    </div>
+
+    <div class="modal-actions">
+      <button class="btn btn-ghost btn-sm" data-close-modal>Annuler</button>
+      <button class="btn btn-sm" id="declSubmit">Envoyer mon signalement</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modalMeasure">
+  <div class="modal" style="max-width:500px;">
+    <h3>Nouvelle mesure</h3>
+    <p class="hint">Instrument : <strong id="measInstrumentName">—</strong> <span style="color:var(--amber);font-weight:600;">(exemple, non officiel)</span></p>
+    <div class="field">
+      <label for="measService">Service concerné</label>
+      <input type="text" id="measService" placeholder="Ex : Chirurgie">
+    </div>
+    <div class="field">
+      <label for="measMoment">Moment de la mesure</label>
+      <select id="measMoment">
+        <option value="admission">Admission</option>
+        <option value="suivi" selected>Suivi</option>
+        <option value="sortie">Sortie</option>
+        <option value="evenement">Événement</option>
+      </select>
+    </div>
+    <div id="measItemsForm"></div>
+    <div class="modal-actions">
+      <button class="btn btn-ghost btn-sm" data-close-modal>Annuler</button>
+      <button class="btn btn-sm" id="measSubmit">Calculer et enregistrer</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modalMeasureDetail">
+  <div class="modal" style="max-width:480px;">
+    <h3 id="detailRef">—</h3>
+    <p class="hint">Traçabilité complète de ce chiffre</p>
+    <div id="detailBody"></div>
+    <div class="modal-actions">
+      <button class="btn btn-ghost btn-sm" data-close-modal>Fermer</button>
+    </div>
   </div>
 </div>
 
@@ -742,8 +800,8 @@
    Remplacez les deux valeurs ci-dessous par celles de votre projet :
    Project Settings → API → Project URL / anon public key
    ============================================================ */
-const SUPABASE_URL = 'https://vblfvrrukvfrzwtqgboo.supabase.co';
-const SUPABASE_ANON_KEY = 'sb_publishable_h3Ka1v4ZqUuk-F0o8s0tpA_-T-62hg0';
+const SUPABASE_URL = 'VOTRE_SUPABASE_URL';
+const SUPABASE_ANON_KEY = 'VOTRE_SUPABASE_ANON_KEY';
 
 /* Lien vers la plateforme Relia Santé (anciennement Synapath), utilisée pour
    les résultats détaillés de satisfaction patient. Remplacez par l'URL réelle
@@ -851,6 +909,8 @@ async function loadAll(){
     renderRisks(); renderAudits(); renderMap(); renderIdeas(); renderWins();
 
     loadReliaSignaux(); // lecture croisée, optionnelle : n'interrompt jamais l'app si absente
+    loadMesures(); // moteur de mesures, optionnel lui aussi (peut ne pas exister encore)
+    loadDeclarations(); // déclaration universelle, optionnelle elle aussi
   }catch(err){
     statusEl.className = 'db-status db-off';
     statusText.textContent = 'Erreur de connexion';
@@ -1073,6 +1133,224 @@ async function loadReliaSignaux(){
   }
 }
 
+/* ============================================================
+   Moteur de mesures & indicateurs — preuve de concept générique.
+   Optionnel : si les tables pq_* n'existent pas encore, la section
+   affiche un message clair au lieu de casser le reste de l'app.
+   ============================================================ */
+let MES_INSTRUMENTS = [], MES_ITEMS = [], MES_MEASUREMENTS = [], MES_ANSWERS = [];
+let mesTablesReady = false;
+
+async function loadMesures(){
+  const instrBox = document.getElementById('instrumentList');
+  const measBox = document.getElementById('measurementList');
+  try{
+    const [instr, items, meas, ans] = await Promise.all([
+      sb.from('pq_instruments').select('*'),
+      sb.from('pq_instrument_items').select('*').order('order_index',{ascending:true}),
+      sb.from('pq_measurements').select('*').order('created_at',{ascending:false}),
+      sb.from('pq_measurement_answers').select('*'),
+    ]);
+    if(instr.error || items.error || meas.error || ans.error) throw (instr.error || items.error || meas.error || ans.error);
+    MES_INSTRUMENTS = instr.data; MES_ITEMS = items.data; MES_MEASUREMENTS = meas.data; MES_ANSWERS = ans.data;
+    mesTablesReady = true;
+    renderInstruments(); renderMeasurements(); renderMesKpis();
+  }catch(err){
+    mesTablesReady = false;
+    instrBox.innerHTML = '<div class="empty-row">Module non initialisé : exécutez database/schema-mesures.sql dans Supabase pour l\'activer.</div>';
+    measBox.innerHTML = '';
+  }
+}
+
+function renderMesKpis(){
+  document.getElementById('mesScoreCount').textContent = MES_MEASUREMENTS.length;
+  if(MES_MEASUREMENTS.length){
+    const avg = MES_MEASUREMENTS.reduce((s,m)=> s + (parseFloat(m.score_brut)||0), 0) / MES_MEASUREMENTS.length;
+    document.getElementById('mesScoreAvg').textContent = avg.toFixed(1);
+  } else {
+    document.getElementById('mesScoreAvg').textContent = '—';
+  }
+}
+
+function renderInstruments(){
+  const box = document.getElementById('instrumentList');
+  box.innerHTML = MES_INSTRUMENTS.map(i=>{
+    const nbItems = MES_ITEMS.filter(it=>it.instrument_id===i.id).length;
+    const badge = i.is_example ? '<span class="badge badge-orange">Exemple — non officiel</span>' : '<span class="badge badge-green">Actif</span>';
+    return `<div class="list-row"><span class="name">${i.name}</span><span class="meta">${nbItems} item(s)</span>${badge}</div>`;
+  }).join('') || '<div class="empty-row">Aucun instrument configuré.</div>';
+}
+
+function renderMeasurements(){
+  const box = document.getElementById('measurementList');
+  if(!MES_MEASUREMENTS.length){ box.innerHTML = '<div class="empty-row">Aucune mesure enregistrée.</div>'; return; }
+  box.innerHTML = MES_MEASUREMENTS.map(m=>{
+    const instr = MES_INSTRUMENTS.find(i=>i.id===m.instrument_id);
+    const when = new Date(m.created_at).toLocaleString('fr-FR',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'});
+    return `<div class="list-row" style="cursor:pointer;" data-ref="${m.reference}"><span class="name">${m.reference}</span><span class="meta">${(instr&&instr.name)||''} · ${m.service_nom||'—'} · ${m.moment}</span><span class="badge badge-teal">${m.score_brut}/${m.score_max}</span><span class="meta">${when}</span></div>`;
+  }).join('');
+  box.querySelectorAll('[data-ref]').forEach(row=>{
+    row.addEventListener('click', ()=> openMeasureDetail(row.dataset.ref));
+  });
+}
+
+document.getElementById('btnNewMeasure').addEventListener('click', ()=>{
+  if(!mesTablesReady){ showToast("Module non initialisé — exécutez d'abord database/schema-mesures.sql"); return; }
+  const instrument = MES_INSTRUMENTS[0];
+  if(!instrument){ showToast('Aucun instrument disponible.'); return; }
+  document.getElementById('measInstrumentName').textContent = instrument.name;
+  const items = MES_ITEMS.filter(it=>it.instrument_id===instrument.id);
+  document.getElementById('measItemsForm').innerHTML = items.map(it=>`
+    <div class="field">
+      <label>${it.label} (${it.min_value}–${it.max_value})</label>
+      <input type="number" min="${it.min_value}" max="${it.max_value}" data-item-id="${it.id}" data-max="${it.max_value}" value="${it.min_value}">
+    </div>`).join('');
+  openModal('modalMeasure');
+});
+
+document.getElementById('measSubmit').addEventListener('click', async ()=>{
+  if(!dbReady){ showToast('Base non connectée.'); return; }
+  const instrument = MES_INSTRUMENTS[0];
+  const service = document.getElementById('measService').value.trim() || 'Non renseigné';
+  const moment = document.getElementById('measMoment').value;
+  const inputs = document.querySelectorAll('#measItemsForm input[data-item-id]');
+  let scoreBrut = 0, scoreMax = 0;
+  const answers = [];
+  inputs.forEach(inp=>{
+    const val = parseFloat(inp.value) || 0;
+    scoreBrut += val;
+    scoreMax += parseFloat(inp.dataset.max);
+    answers.push({ item_id: inp.dataset.itemId, value_numeric: val });
+  });
+
+  // 1) créer la mesure pour obtenir un id technique
+  const { data: measRows, error: e1 } = await sb.from('pq_measurements').insert({
+    instrument_id: instrument.id, service_nom: service, moment,
+    statut: 'validated', score_brut: scoreBrut, score_max: scoreMax, validated_at: new Date().toISOString()
+  }).select();
+  if(e1){ showToast('Erreur : '+e1.message); return; }
+  const measId = measRows[0].id;
+
+  // 2) générer la référence unique à partir de l'id technique (jamais réutilisée)
+  const year = new Date().getFullYear().toString().slice(-2);
+  const reference = `PQ-${year}-${instrument.code}-${String(measId).padStart(6,'0')}`;
+  await sb.from('pq_measurements').update({ reference }).eq('id', measId);
+
+  // 3) enregistrer les réponses (traçabilité : chaque score remonte à ses réponses)
+  const answerRows = answers.map(a=>({ measurement_id: measId, item_id: a.item_id, value_numeric: a.value_numeric }));
+  const { error: e2 } = await sb.from('pq_measurement_answers').insert(answerRows);
+  if(e2){ showToast('Erreur réponses : '+e2.message); return; }
+
+  closeModal('modalMeasure');
+  showToast(`Mesure ${reference} enregistrée — score ${scoreBrut}/${scoreMax}`);
+  await loadMesures();
+});
+
+function openMeasureDetail(reference){
+  const m = MES_MEASUREMENTS.find(x=>x.reference===reference);
+  if(!m) return;
+  const instr = MES_INSTRUMENTS.find(i=>i.id===m.instrument_id);
+  const answers = MES_ANSWERS.filter(a=>a.measurement_id===m.id);
+  document.getElementById('detailRef').textContent = m.reference;
+  document.getElementById('detailBody').innerHTML = `
+    <div class="list-row"><span class="name">Instrument</span><span class="meta">${(instr&&instr.name)||'—'}</span></div>
+    <div class="list-row"><span class="name">Service</span><span class="meta">${m.service_nom||'—'}</span></div>
+    <div class="list-row"><span class="name">Moment</span><span class="meta">${m.moment}</span></div>
+    <div class="list-row"><span class="name">Score</span><span class="meta">${m.score_brut} / ${m.score_max}</span></div>
+    <div class="list-row"><span class="name">Formule</span><span class="meta">Somme des ${answers.length} réponses</span></div>
+    <div class="list-row"><span class="name">Enregistré par</span><span class="meta">${m.created_by}</span></div>
+    <div class="list-row"><span class="name">Horodatage</span><span class="meta">${new Date(m.created_at).toLocaleString('fr-FR')}</span></div>
+    <div class="card-title" style="margin-top:14px;font-size:12.5px;">Réponses sources :</div>
+    ${answers.map(a=>{
+      const item = MES_ITEMS.find(it=>it.id===a.item_id);
+      return `<div class="list-row"><span class="name">${(item&&item.label)||'—'}</span><span class="meta">${a.value_numeric}</span></div>`;
+    }).join('')}
+  `;
+  openModal('modalMeasureDetail');
+}
+
+/* ============================================================
+   Déclaration universelle — version simplifiée du module Risques.
+   Accessible à tout professionnel, sans vocabulaire qualité imposé.
+   La qualification (EIAS, criticité...) reste un travail humain
+   ultérieur : ce module ne fait qu'accueillir la déclaration et
+   proposer une piste, jamais une qualification automatique définitive.
+   ============================================================ */
+let DECLARATIONS = [];
+let declTablesReady = false;
+
+async function loadDeclarations(){
+  const box = document.getElementById('declarationsList');
+  try{
+    const { data, error } = await sb.from('pq_declarations').select('*').order('created_at',{ascending:false});
+    if(error) throw error;
+    DECLARATIONS = data;
+    declTablesReady = true;
+    renderDeclarations();
+  }catch(err){
+    declTablesReady = false;
+    box.innerHTML = '<div class="empty-row">Module non initialisé : exécutez database/schema-risques.sql dans Supabase pour l\'activer.</div>';
+  }
+}
+
+function renderDeclarations(){
+  const box = document.getElementById('declarationsList');
+  if(!DECLARATIONS.length){ box.innerHTML = '<div class="empty-row">Aucun signalement pour le moment.</div>'; return; }
+  const statutLabel = {declare:'Déclarée', en_analyse:'En analyse', cloture:'Clôturée', brouillon:'Brouillon'};
+  const statutBadge = {declare:'badge-teal', en_analyse:'badge-orange', cloture:'badge-green', brouillon:'badge-amber'};
+  box.innerHTML = DECLARATIONS.slice(0,8).map(d=>{
+    const when = new Date(d.created_at).toLocaleString('fr-FR',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'});
+    const apercu = d.description.length > 70 ? d.description.slice(0,70)+'…' : d.description;
+    return `<div class="list-row"><span class="name">${d.reference} — ${apercu}</span><span class="badge ${statutBadge[d.statut]||'badge-teal'}">${statutLabel[d.statut]||d.statut}</span><span class="meta">${when}</span></div>`;
+  }).join('');
+}
+
+document.getElementById('btnDeclarationUniverselle').addEventListener('click', ()=>{
+  if(!declTablesReady){ showToast("Module non initialisé — exécutez d'abord database/schema-risques.sql"); return; }
+  document.getElementById('declDescription').value = '';
+  document.getElementById('declDate').value = '';
+  document.getElementById('declHeure').value = '';
+  document.getElementById('declQuandInconnu').checked = false;
+  document.getElementById('declMesures').value = '';
+  document.getElementById('declConsequence').value = 'je_ne_sais_pas';
+  document.querySelectorAll('.concerne-grid input').forEach(cb=>cb.checked=false);
+  openModal('modalDeclaration');
+});
+
+document.getElementById('declSubmit').addEventListener('click', async ()=>{
+  if(!dbReady){ showToast('Base non connectée.'); return; }
+  const description = document.getElementById('declDescription').value.trim();
+  if(!description){ showToast('Décrivez au moins ce qui s\'est passé — le reste peut rester "je ne sais pas".'); return; }
+
+  const categorie = document.getElementById('declCategorie').value || null;
+  const quandInconnu = document.getElementById('declQuandInconnu').checked;
+  const quandDate = quandInconnu ? null : (document.getElementById('declDate').value || null);
+  const quandHeure = quandInconnu ? null : (document.getElementById('declHeure').value || null);
+  const concerne = Array.from(document.querySelectorAll('.concerne-grid input:checked')).map(cb=>cb.value).join(', ');
+  const consequence = document.getElementById('declConsequence').value;
+  const mesures = document.getElementById('declMesures').value.trim() || null;
+
+  const { data: rows, error: e1 } = await sb.from('pq_declarations').insert({
+    categorie_initiale: categorie, description, quand_date: quandDate, quand_heure: quandHeure,
+    quand_inconnu: quandInconnu, concerne, consequence, mesures_immediates: mesures, statut: 'declare'
+  }).select();
+  if(e1){ showToast('Erreur : '+e1.message); return; }
+
+  const id = rows[0].id;
+  const year = new Date().getFullYear().toString().slice(-2);
+  const reference = `EVT-${year}-${String(id).padStart(6,'0')}`;
+  await sb.from('pq_declarations').update({ reference }).eq('id', id);
+
+  closeModal('modalDeclaration');
+
+  // Proposition de piste — jamais une qualification définitive, toujours à valider par un humain habilité
+  let piste = 'Analyse à réaliser par le référent qualité.';
+  if(consequence==='aucune' || consequence==='legere') piste = 'Pourrait relever d\'un presque accident — à confirmer.';
+  if(consequence==='grave') piste = '⚠️ Pourrait nécessiter une analyse approfondie — vérification par un responsable habilité recommandée.';
+  showToast(`Signalement ${reference} enregistré. ${piste}`);
+  await loadDeclarations();
+});
+
 document.getElementById('btnDeclareEvent').addEventListener('click', ()=> openModal('modalEvent'));
 document.getElementById('evSubmit').addEventListener('click', async ()=>{
   const desc = document.getElementById('evDesc').value.trim();
@@ -1252,655 +1530,6 @@ chatInput.addEventListener('keydown', e=>{
 document.querySelectorAll('.chip-suggest').forEach(chip=>{
   chip.addEventListener('click', ()=> sendToAI(chip.dataset.q));
 });
-
-/* ============================================================
-   MODULE « MESURES & INDICATEURS » — moteur générique
-   ------------------------------------------------------------
-   Aucun formulaire codé en dur : instruments, versions, sections,
-   items, règles de validation et règles de calcul viennent du
-   référentiel (Supabase si disponible, sinon référentiel local).
-   Les contenus officiels ANQ ne sont PAS reproduits : les items
-   sont des PLACEHOLDERS explicitement marqués, à remplacer par
-   la source officielle autorisée.
-   ============================================================ */
-
-/* ---------- Référentiel de secours (démo hors-ligne) ---------- */
-const PLACEHOLDER_NOTE = "Libellé officiel à charger depuis la source autorisée (placeholder)";
-
-function ph(code, n, min, max){
-  const items = [];
-  for(let k=1;k<=n;k++){
-    items.push({ code:`${code}_${String(k).padStart(2,'0')}`, label:`Item ${String(k).padStart(2,'0')} — ${PLACEHOLDER_NOTE}`,
-      type:'scale', required:true, min_value:min, max_value:max, order:k, placeholder:true });
-  }
-  return items;
-}
-
-const REF_FALLBACK = {
-  instruments: [
-    { code:'HONOS',      name:'HoNOS',      domain:'PSY', population:'Adulte',        source:'ANQ', owner:'ANQ / détenteur des droits', license_required:true,  license_status:'à vérifier', active:true },
-    { code:'BSCL',       name:'BSCL',       domain:'PSY', population:'Adulte',        source:'ANQ', owner:'ANQ / détenteur des droits', license_required:true,  license_status:'à vérifier', active:true },
-    { code:'HONOSCA',    name:'HoNOSCA',    domain:'PSY', population:'Enfant/ado',    source:'ANQ', owner:'ANQ / détenteur des droits', license_required:true,  license_status:'à vérifier', active:true },
-    { code:'HONOSCA_SR', name:'HoNOSCA-SR', domain:'PSY', population:'Enfant/ado',    source:'ANQ', owner:'ANQ / détenteur des droits', license_required:true,  license_status:'à vérifier', active:true },
-    { code:'EFM',        name:'EFM (mesures limitatives de liberté)', domain:'PSY', population:'Adulte/PEA', source:'ANQ', owner:'ANQ', license_required:false, license_status:'à vérifier', active:true },
-    { code:'EBI',        name:'EBI',        domain:'REA', population:'Selon périmètre', source:'ANQ', owner:'ANQ', license_required:false, license_status:'à vérifier', active:true },
-    { code:'FIM_MIF',    name:'FIM/MIF',    domain:'REA', population:'Selon périmètre', source:'ANQ', owner:'UDSMR / détenteur des droits', license_required:true, license_status:'à vérifier', active:true },
-    { code:'CIRS',       name:'CIRS',       domain:'REA', population:'Selon périmètre', source:'ANQ', owner:'ANQ', license_required:false, license_status:'à vérifier', active:true },
-    { code:'PQ_DOULEUR', name:'Échelle douleur (interne)', domain:'DOU', population:'Tous', source:'Interne', owner:'Établissement', license_required:false, license_status:'libre', active:true },
-    { code:'PQ_PREM',    name:'PREMs (interne)', domain:'EXP', population:'Tous', source:'Interne', owner:'Établissement', license_required:false, license_status:'libre', active:true }
-  ],
-  versions: [
-    { instrument_code:'HONOS',      version:'v-placeholder-1', effective_from:'2026-01-01', status:'active', calculation_version:'1', validation_version:'1', source_document:'À renseigner (document officiel ANQ)', items:ph('HONOS',12,0,4),      rule:{ type:'SUM', unit:'points', max:48 } },
-    { instrument_code:'BSCL',       version:'v-placeholder-1', effective_from:'2026-01-01', status:'active', calculation_version:'1', validation_version:'1', source_document:'À renseigner (document officiel ANQ)', items:ph('BSCL',10,0,4),       rule:{ type:'AVERAGE', unit:'score moyen', max:4 } },
-    { instrument_code:'HONOSCA',    version:'v-placeholder-1', effective_from:'2026-01-01', status:'active', calculation_version:'1', validation_version:'1', source_document:'À renseigner (document officiel ANQ)', items:ph('HONOSCA',13,0,4),    rule:{ type:'SUM', unit:'points', max:52 } },
-    { instrument_code:'HONOSCA_SR', version:'v-placeholder-1', effective_from:'2026-01-01', status:'active', calculation_version:'1', validation_version:'1', source_document:'À renseigner (document officiel ANQ)', items:ph('HONOSCA_SR',13,0,4), rule:{ type:'SUM', unit:'points', max:52 } },
-    { instrument_code:'EBI',        version:'v-placeholder-1', effective_from:'2026-01-01', status:'active', calculation_version:'1', validation_version:'1', source_document:'À renseigner (document officiel ANQ)', items:ph('EBI',6,0,3),         rule:{ type:'SUM', unit:'points', max:18 } },
-    { instrument_code:'FIM_MIF',    version:'v-placeholder-1', effective_from:'2026-01-01', status:'active', calculation_version:'1', validation_version:'1', source_document:'À renseigner (licence requise)', items:ph('FIM_MIF',18,1,7),          rule:{ type:'SUM', unit:'points', max:126 } },
-    { instrument_code:'CIRS',       version:'v-placeholder-1', effective_from:'2026-01-01', status:'active', calculation_version:'1', validation_version:'1', source_document:'À renseigner (document officiel ANQ)', items:ph('CIRS',14,0,4),       rule:{ type:'SUM', unit:'points', max:56 } },
-    { instrument_code:'EFM',        version:'v-placeholder-1', effective_from:'2026-01-01', status:'active', calculation_version:'1', validation_version:'1', source_document:'À renseigner (document officiel ANQ)',
-      items:[
-        { code:'EFM_01', label:"Une mesure limitative de liberté a-t-elle eu lieu ?", type:'boolean', required:true, order:1 },
-        { code:'EFM_02', label:"Type de mesure", type:'single_choice', required:false, order:2, options:['Isolement','Contention','Médication forcée','Autre'], conditional:{ item:'EFM_01', equals:true } },
-        { code:'EFM_03', label:"Durée totale (heures)", type:'decimal', required:false, order:3, min_value:0, max_value:2000, unit:'h', conditional:{ item:'EFM_01', equals:true } },
-        { code:'EFM_04', label:"Nombre d'épisodes", type:'integer', required:false, order:4, min_value:0, max_value:200, conditional:{ item:'EFM_01', equals:true } }
-      ],
-      rule:{ type:'COUNT', unit:'épisode(s)', field:'EFM_04' } },
-    { instrument_code:'PQ_DOULEUR', version:'1.0', effective_from:'2026-01-01', status:'active', calculation_version:'1', validation_version:'1', source_document:'Procédure interne',
-      items:[
-        { code:'DOU_01', label:"Douleur évaluée dans les 24h ?", type:'boolean', required:true, order:1 },
-        { code:'DOU_02', label:"Intensité (EVA 0–10)", type:'scale', required:true, order:2, min_value:0, max_value:10 },
-        { code:'DOU_03', label:"Douleur maîtrisée (EVA ≤ 3) ?", type:'boolean', required:true, order:3 }
-      ],
-      rule:{ type:'MAX', unit:'EVA', field:'DOU_02', max:10 } },
-    { instrument_code:'PQ_PREM', version:'1.0', effective_from:'2026-01-01', status:'active', calculation_version:'1', validation_version:'1', source_document:'Questionnaire interne',
-      items:[
-        { code:'PREM_01', label:"Satisfaction globale (0–10)", type:'scale', required:true, order:1, min_value:0, max_value:10 },
-        { code:'PREM_02', label:"Information reçue (0–10)", type:'scale', required:true, order:2, min_value:0, max_value:10 },
-        { code:'PREM_03', label:"Recommanderiez-vous l'établissement ? (0–10)", type:'scale', required:true, order:3, min_value:0, max_value:10 },
-        { code:'PREM_04', label:"Commentaire libre", type:'textarea', required:false, order:4 }
-      ],
-      rule:{ type:'PERCENTAGE', unit:'%', fields:['PREM_01','PREM_02','PREM_03'], base:10 } }
-  ]
-};
-
-const DOMAINS = [
-  { code:'PSY', label:'Psychiatrie' }, { code:'REA', label:'Réadaptation' }, { code:'SOA', label:'Soins aigus' },
-  { code:'GER', label:'Gériatrie' },   { code:'SEC', label:'Sécurité patient' }, { code:'EXP', label:'Expérience patient' },
-  { code:'DOU', label:'Douleur' },     { code:'INF', label:'Infection' },   { code:'CHU', label:'Chutes' }, { code:'ESC', label:'Escarres' }
-];
-const MOMENTS = [
-  { code:'ADMISSION', label:'Admission' }, { code:'IN_STAY', label:'Pendant séjour' }, { code:'DISCHARGE', label:'Sortie' },
-  { code:'EVENT', label:'Événement' },     { code:'FOLLOW_UP', label:'Suivi' },        { code:'REASSESSMENT', label:'Réévaluation' }
-];
-
-/* ---------- Stockage (Supabase si dispo, sinon local) ---------- */
-const PQ_KEY = 'pulse_qualite_measurements_v1';
-const PQ_LOG_KEY = 'pulse_qualite_audit_v1';
-let PQ_REF = { instruments:[], versions:[] };
-let MEASUREMENTS = [];
-let AUDIT_LOG = [];
-let pqRemote = false;
-
-function lsGet(k){ try{ return JSON.parse(localStorage.getItem(k) || '[]'); }catch(e){ return []; } }
-function lsSet(k,v){ try{ localStorage.setItem(k, JSON.stringify(v)); }catch(e){} }
-function uuid(){ return (crypto.randomUUID ? crypto.randomUUID() : 'id-'+Date.now()+'-'+Math.random().toString(16).slice(2)); }
-
-async function pqLoadReferentiel(){
-  PQ_REF = { instruments: REF_FALLBACK.instruments.slice(), versions: REF_FALLBACK.versions.slice() };
-  if(!dbReady) return;
-  try{
-    const [i, v] = await Promise.all([
-      sb.from('pq_instruments').select('*'),
-      sb.from('pq_instrument_versions').select('*')
-    ]);
-    if(!i.error && i.data && i.data.length){ PQ_REF.instruments = i.data; }
-    if(!v.error && v.data && v.data.length){
-      PQ_REF.versions = v.data.map(x=> ({ ...x, items: x.items || [], rule: x.rule || { type:'SUM', unit:'points' } }));
-    }
-  }catch(e){ /* référentiel local conservé */ }
-}
-
-async function pqLoadMeasurements(){
-  if(dbReady){
-    try{
-      const r = await sb.from('pq_measurements').select('*').order('created_at', {ascending:false});
-      if(!r.error && r.data){ MEASUREMENTS = r.data; pqRemote = true; }
-      const l = await sb.from('pq_audit_logs').select('*').order('timestamp', {ascending:false}).limit(50);
-      if(!l.error && l.data) AUDIT_LOG = l.data;
-      if(pqRemote) return;
-    }catch(e){ /* fallback local */ }
-  }
-  pqRemote = false;
-  MEASUREMENTS = lsGet(PQ_KEY);
-  AUDIT_LOG = lsGet(PQ_LOG_KEY);
-}
-
-async function pqSaveMeasurement(m){
-  if(pqRemote){
-    const { error } = await sb.from('pq_measurements').upsert(m);
-    if(error){ showToast('Erreur enregistrement : '+error.message); return false; }
-    return true;
-  }
-  const all = lsGet(PQ_KEY);
-  const idx = all.findIndex(x=>x.id===m.id);
-  if(idx>=0) all[idx] = m; else all.unshift(m);
-  lsSet(PQ_KEY, all); MEASUREMENTS = all;
-  return true;
-}
-
-async function pqLog(action, entity_id, oldV, newV){
-  const entry = { id:uuid(), user_id:'demo-user', entity_type:'measurement', entity_id, action,
-    old_value:oldV||null, new_value:newV||null, timestamp:new Date().toISOString() };
-  if(pqRemote){ try{ await sb.from('pq_audit_logs').insert(entry); }catch(e){} }
-  AUDIT_LOG.unshift(entry);
-  if(!pqRemote) lsSet(PQ_LOG_KEY, AUDIT_LOG.slice(0,200));
-}
-
-/* ---------- Référence unique PQ-YY-DOMAINE-INSTRUMENT-XXXXXX ---------- */
-function pqNextReference(domain, instrumentCode){
-  const yy = String(new Date().getFullYear()).slice(2);
-  const used = MEASUREMENTS.map(m=>m.reference);
-  let seq = MEASUREMENTS.length + 1;
-  let ref;
-  do{
-    ref = `PQ-${yy}-${domain}-${instrumentCode.replace(/_/g,'')}-${String(seq).padStart(6,'0')}`;
-    seq++;
-  } while(used.includes(ref));
-  return ref;
-}
-
-/* ---------- Moteur de règles ---------- */
-function isVisible(item, answers){
-  if(!item.conditional) return true;
-  const v = answers[item.conditional.item];
-  if('equals' in item.conditional) return String(v) === String(item.conditional.equals);
-  if('not_equals' in item.conditional) return String(v) !== String(item.conditional.not_equals);
-  return true;
-}
-
-function validateAnswers(version, answers){
-  const errors = [];
-  version.items.forEach(it=>{
-    if(!isVisible(it, answers)) return;
-    const v = answers[it.code];
-    const empty = (v===undefined || v===null || v==='');
-    if(it.required && empty){ errors.push(`${it.code} : réponse obligatoire manquante`); return; }
-    if(empty) return;
-    if(['integer','decimal','scale'].includes(it.type)){
-      const n = Number(v);
-      if(Number.isNaN(n)) errors.push(`${it.code} : valeur numérique invalide`);
-      else{
-        if(it.min_value!=null && n < it.min_value) errors.push(`${it.code} : valeur < ${it.min_value}`);
-        if(it.max_value!=null && n > it.max_value) errors.push(`${it.code} : valeur > ${it.max_value}`);
-        if(it.type==='integer' && !Number.isInteger(n)) errors.push(`${it.code} : entier attendu`);
-      }
-    }
-  });
-  return errors;
-}
-
-function completeness(version, answers){
-  const visible = version.items.filter(it=> isVisible(it, answers) && it.required);
-  const done = visible.filter(it=>{ const v = answers[it.code]; return !(v===undefined||v===null||v===''); });
-  return { done: done.length, total: visible.length };
-}
-
-function computeScore(version, answers){
-  const rule = version.rule || { type:'SUM', unit:'points' };
-  const nums = version.items
-    .filter(it=> isVisible(it, answers) && ['integer','decimal','scale'].includes(it.type))
-    .filter(it=> !rule.fields || rule.fields.includes(it.code))
-    .map(it=> Number(answers[it.code]))
-    .filter(n=> !Number.isNaN(n));
-  const one = (code)=> Number(answers[code]);
-  let raw = null;
-  switch(rule.type){
-    case 'SUM': raw = nums.reduce((a,b)=>a+b,0); break;
-    case 'AVERAGE': raw = nums.length ? nums.reduce((a,b)=>a+b,0)/nums.length : null; break;
-    case 'MIN': raw = nums.length ? Math.min(...nums) : null; break;
-    case 'MAX': raw = rule.field ? one(rule.field) : (nums.length ? Math.max(...nums) : null); break;
-    case 'COUNT': raw = rule.field ? (one(rule.field)||0) : nums.length; break;
-    case 'PERCENTAGE': raw = nums.length ? (nums.reduce((a,b)=>a+b,0) / (nums.length*(rule.base||10))) * 100 : null; break;
-    default: raw = nums.reduce((a,b)=>a+b,0);
-  }
-  if(raw===null || Number.isNaN(raw)) return null;
-  raw = Math.round(raw*100)/100;
-  const normalized = rule.max ? Math.round((raw/rule.max)*10000)/100 : null;
-  return { raw_score: raw, normalized_score: normalized, score_unit: rule.unit || '',
-    calculation_rule: rule.type, calculation_version: version.calculation_version || '1', max: rule.max || null };
-}
-
-/* ---------- Onglets du module ---------- */
-document.querySelectorAll('#mTabs .tab').forEach(tab=>{
-  tab.addEventListener('click', ()=>{
-    document.querySelectorAll('#mTabs .tab').forEach(t=>t.classList.remove('active'));
-    tab.classList.add('active');
-    document.querySelectorAll('.mpanel').forEach(p=>p.classList.remove('active'));
-    document.querySelector(`.mpanel[data-mpanel="${tab.dataset.mtab}"]`).classList.add('active');
-  });
-});
-function openMTab(name){
-  const t = document.querySelector(`#mTabs .tab[data-mtab="${name}"]`);
-  if(t) t.click();
-}
-
-/* ---------- Assistant : état ---------- */
-let W = null;
-function newWizard(){
-  W = { step:1, context:{ service:'', unit:'', patient:'', stay:'', professional:'M. Dubois',
-        date:new Date().toISOString().slice(0,10), time:new Date().toTimeString().slice(0,5) },
-        domain:null, instrument:null, version:null, moment:null, answers:{}, measurement:null };
-  renderWizard();
-}
-
-function renderWizard(){
-  const steps = document.getElementById('wizardSteps');
-  const labels = ['Contexte','Domaine','Instrument','Moment','Formulaire'];
-  steps.innerHTML = `<div class="pq-steps">` + labels.map((l,i)=>
-    `<span class="pq-step ${W.step===i+1?'on':''} ${W.step>i+1?'done':''}">${i+1}. ${l}</span>`).join('') + `</div>`;
-  const body = document.getElementById('wizardBody');
-  if(W.step===1) return renderStepContext(body);
-  if(W.step===2) return renderStepDomain(body);
-  if(W.step===3) return renderStepInstrument(body);
-  if(W.step===4) return renderStepMoment(body);
-  return renderStepForm(body);
-}
-
-function renderStepContext(el){
-  const svcOptions = (SERVICES.length ? SERVICES.map(s=>s.nom) : ['Service A','Service B','Service C'])
-    .map(n=>`<option ${W.context.service===n?'selected':''}>${n}</option>`).join('');
-  el.innerHTML = `
-    <div class="pq-form-grid">
-      <label class="pq-f"><span>Établissement</span><input value="Centre Hospitalier" disabled></label>
-      <label class="pq-f"><span>Service</span><select id="ctxService">${svcOptions}</select></label>
-      <label class="pq-f"><span>Unité</span><input id="ctxUnit" value="${W.context.unit}" placeholder="Unité / secteur"></label>
-      <label class="pq-f"><span>Patient (référence anonymisée)</span><input id="ctxPatient" value="${W.context.patient}" placeholder="ex. PAT-000142"></label>
-      <label class="pq-f"><span>Séjour (référence)</span><input id="ctxStay" value="${W.context.stay}" placeholder="ex. SEJ-000318"></label>
-      <label class="pq-f"><span>Professionnel</span><input id="ctxPro" value="${W.context.professional}"></label>
-      <label class="pq-f"><span>Date de mesure</span><input type="date" id="ctxDate" value="${W.context.date}"></label>
-      <label class="pq-f"><span>Heure</span><input type="time" id="ctxTime" value="${W.context.time}"></label>
-    </div>
-    <div class="pq-actions"><button class="btn" id="wNext1">Continuer</button></div>
-    <p class="pq-hint">Aucune donnée nominative n'est demandée : uniquement des références internes (principe de minimisation).</p>`;
-  document.getElementById('wNext1').addEventListener('click', ()=>{
-    W.context = { service:document.getElementById('ctxService').value, unit:document.getElementById('ctxUnit').value,
-      patient:document.getElementById('ctxPatient').value, stay:document.getElementById('ctxStay').value,
-      professional:document.getElementById('ctxPro').value, date:document.getElementById('ctxDate').value,
-      time:document.getElementById('ctxTime').value };
-    W.step=2; renderWizard();
-  });
-}
-
-function renderStepDomain(el){
-  el.innerHTML = `<div class="pq-choice">` + DOMAINS.map(d=>
-    `<button class="pq-opt" data-code="${d.code}">${d.label}<small>${d.code}</small></button>`).join('') + `</div>
-    <div class="pq-actions"><button class="btn btn-ghost btn-sm" id="wBack2">Retour</button></div>`;
-  el.querySelectorAll('.pq-opt').forEach(b=> b.addEventListener('click', ()=>{ W.domain=b.dataset.code; W.step=3; renderWizard(); }));
-  document.getElementById('wBack2').addEventListener('click', ()=>{ W.step=1; renderWizard(); });
-}
-
-function renderStepInstrument(el){
-  let list = PQ_REF.instruments.filter(i=> i.active !== false && i.domain===W.domain);
-  if(!list.length) list = PQ_REF.instruments.filter(i=> i.active !== false);
-  el.innerHTML = `<div class="pq-choice">` + list.map(i=>{
-    const versions = PQ_REF.versions.filter(v=> v.instrument_code===i.code);
-    const lic = i.license_required ? `<span class="badge badge-amber">licence ${i.license_status||'à vérifier'}</span>` : '';
-    return `<button class="pq-opt ${versions.length?'':'disabled'}" data-code="${i.code}" ${versions.length?'':'disabled'}>
-      ${i.name} ${lic}<small>${i.population||''} · ${versions.length?versions.length+' version(s)':'aucune version configurée'}</small></button>`;
-  }).join('') + `</div>
-  <div class="pq-actions"><button class="btn btn-ghost btn-sm" id="wBack3">Retour</button></div>`;
-  el.querySelectorAll('.pq-opt:not(.disabled)').forEach(b=> b.addEventListener('click', ()=>{
-    W.instrument = PQ_REF.instruments.find(i=>i.code===b.dataset.code);
-    const vs = PQ_REF.versions.filter(v=> v.instrument_code===W.instrument.code);
-    W.version = vs.find(v=>v.status==='active') || vs[0];
-    W.step=4; renderWizard();
-  }));
-  document.getElementById('wBack3').addEventListener('click', ()=>{ W.step=2; renderWizard(); });
-}
-
-function renderStepMoment(el){
-  el.innerHTML = `<div class="pq-choice">` + MOMENTS.map(m=>
-    `<button class="pq-opt" data-code="${m.code}">${m.label}<small>${m.code}</small></button>`).join('') + `</div>
-    <div class="pq-actions"><button class="btn btn-ghost btn-sm" id="wBack4">Retour</button></div>`;
-  el.querySelectorAll('.pq-opt').forEach(b=> b.addEventListener('click', async ()=>{
-    W.moment = b.dataset.code;
-    W.measurement = {
-      id: uuid(),
-      reference: pqNextReference(W.domain, W.instrument.code),
-      instrument_code: W.instrument.code,
-      instrument_version: W.version.version,
-      calculation_version: W.version.calculation_version || '1',
-      domain: W.domain,
-      patient_ref: W.context.patient, stay_ref: W.context.stay, service: W.context.service, unit: W.context.unit,
-      professional: W.context.professional,
-      measurement_date: W.context.date, measurement_time: W.context.time,
-      measurement_context: W.moment,
-      status: 'draft',
-      answers: {}, score: null,
-      created_at: new Date().toISOString(), updated_at: new Date().toISOString(),
-      created_by: W.context.professional, validated_at: null, validated_by: null
-    };
-    await pqSaveMeasurement(W.measurement);
-    await pqLog('CREATE', W.measurement.id, null, { reference: W.measurement.reference, status:'draft' });
-    W.step=5; renderWizard(); renderMeasureLists(); renderDataQuality();
-  }));
-  document.getElementById('wBack4').addEventListener('click', ()=>{ W.step=3; renderWizard(); });
-}
-
-function itemField(it, answers){
-  const v = answers[it.code];
-  const val = (v===undefined||v===null) ? '' : v;
-  const req = it.required ? '<em class="pq-req">obligatoire</em>' : '';
-  let input = '';
-  switch(it.type){
-    case 'boolean':
-      input = `<select data-item="${it.code}"><option value="">—</option>
-        <option value="true" ${String(v)==='true'?'selected':''}>Oui</option>
-        <option value="false" ${String(v)==='false'?'selected':''}>Non</option></select>`; break;
-    case 'single_choice':
-      input = `<select data-item="${it.code}"><option value="">—</option>` +
-        (it.options||[]).map(o=>`<option ${val===o?'selected':''}>${o}</option>`).join('') + `</select>`; break;
-    case 'textarea':
-      input = `<textarea rows="3" data-item="${it.code}">${val}</textarea>`; break;
-    case 'text':
-      input = `<input data-item="${it.code}" value="${val}">`; break;
-    case 'date':
-      input = `<input type="date" data-item="${it.code}" value="${val}">`; break;
-    case 'integer': case 'decimal': case 'scale':
-      input = `<input type="number" step="${it.type==='decimal'?'0.01':'1'}" data-item="${it.code}" value="${val}"
-        ${it.min_value!=null?`min="${it.min_value}"`:''} ${it.max_value!=null?`max="${it.max_value}"`:''}>`; break;
-    default:
-      input = `<input data-item="${it.code}" value="${val}">`;
-  }
-  const bounds = (it.min_value!=null && it.max_value!=null) ? `<small>${it.min_value} – ${it.max_value}${it.unit?' '+it.unit:''}</small>` : (it.unit?`<small>${it.unit}</small>`:'');
-  return `<label class="pq-f ${it.placeholder?'pq-placeholder':''}"><span>${it.code} · ${it.label} ${req}</span>${input}${bounds}</label>`;
-}
-
-function renderStepForm(el){
-  const m = W.measurement, ver = W.version;
-  const items = ver.items.slice().sort((a,b)=>(a.order||0)-(b.order||0)).filter(it=> isVisible(it, W.answers));
-  const c = completeness(ver, W.answers);
-  const sc = computeScore(ver, W.answers);
-  const placeholderWarn = ver.items.some(i=>i.placeholder)
-    ? `<div class="setup-banner">⚠️ Les items de cet instrument sont des <strong>placeholders</strong>. Le contenu officiel (libellés, cotations, règles) doit être chargé depuis la source autorisée avant tout usage réel. Le moteur, lui, est fonctionnel.</div>` : '';
-  el.innerHTML = `
-    ${placeholderWarn}
-    <div class="pq-meta">
-      <div><span>Référence</span><strong class="mono">${m.reference}</strong></div>
-      <div><span>Instrument</span><strong>${W.instrument.name} · ${ver.version}</strong></div>
-      <div><span>Moment</span><strong>${(MOMENTS.find(x=>x.code===m.measurement_context)||{}).label||m.measurement_context}</strong></div>
-      <div><span>Service</span><strong>${m.service||'—'}</strong></div>
-      <div><span>Statut</span><strong>${m.status}</strong></div>
-    </div>
-    <div class="pq-form-grid" id="formGrid">${items.map(it=> itemField(it, W.answers)).join('')}</div>
-    <div class="pq-footer">
-      <div><strong>${c.done} / ${c.total}</strong> items complétés ${c.done<c.total?`<span class="badge badge-orange">${c.total-c.done} manquant(s)</span>`:'<span class="badge badge-green">complet</span>'}</div>
-      <div>Score (${(ver.rule||{}).type||'SUM'}) : <strong class="mono">${sc? sc.raw_score : '—'}${sc&&sc.max?' / '+sc.max:''} ${sc?sc.score_unit:''}</strong></div>
-      <div class="pq-actions">
-        <button class="btn btn-ghost btn-sm" id="wSaveDraft">Enregistrer le brouillon</button>
-        <button class="btn btn-sm" id="wValidate">Valider la mesure</button>
-      </div>
-    </div>
-    <div id="wErrors"></div>`;
-
-  el.querySelectorAll('[data-item]').forEach(inp=>{
-    inp.addEventListener('input', ()=>{ W.answers[inp.dataset.item] = inp.value; refreshFooter(); });
-    inp.addEventListener('change', ()=>{ W.answers[inp.dataset.item] = inp.value; renderStepForm(el); });
-  });
-  document.getElementById('wSaveDraft').addEventListener('click', ()=> saveMeasure('in_progress'));
-  document.getElementById('wValidate').addEventListener('click', ()=> saveMeasure('validated'));
-}
-
-function refreshFooter(){
-  const el = document.getElementById('wizardBody');
-  const ver = W.version;
-  const c = completeness(ver, W.answers);
-  const sc = computeScore(ver, W.answers);
-  const f = el.querySelector('.pq-footer');
-  if(!f) return;
-  f.children[0].innerHTML = `<strong>${c.done} / ${c.total}</strong> items complétés ${c.done<c.total?`<span class="badge badge-orange">${c.total-c.done} manquant(s)</span>`:'<span class="badge badge-green">complet</span>'}`;
-  f.children[1].innerHTML = `Score (${(ver.rule||{}).type||'SUM'}) : <strong class="mono">${sc? sc.raw_score : '—'}${sc&&sc.max?' / '+sc.max:''} ${sc?sc.score_unit:''}</strong>`;
-}
-
-async function saveMeasure(targetStatus){
-  const ver = W.version, m = W.measurement;
-  const errors = targetStatus==='validated' ? validateAnswers(ver, W.answers) : [];
-  const box = document.getElementById('wErrors');
-  if(errors.length){
-    box.innerHTML = `<div class="setup-banner">❌ Validation impossible :<br>• ${errors.join('<br>• ')}</div>`;
-    showToast('Règles de validation non respectées.');
-    return;
-  }
-  box.innerHTML = '';
-  const old = { status:m.status, score:m.score };
-  m.answers = { ...W.answers };
-  m.score = computeScore(ver, W.answers);
-  m.status = targetStatus;
-  m.updated_at = new Date().toISOString();
-  if(targetStatus==='validated'){ m.validated_at = new Date().toISOString(); m.validated_by = m.professional; }
-  const ok = await pqSaveMeasurement(m);
-  if(!ok) return;
-  await pqLog(targetStatus==='validated' ? 'VALIDATE' : 'UPDATE', m.id, old, { status:m.status, score:m.score });
-  showToast(targetStatus==='validated' ? `Mesure ${m.reference} validée — indicateurs recalculés.` : 'Brouillon enregistré.');
-  renderMeasureLists(); renderIndicators(); renderDataQuality(); renderAuditLog(); renderDashboard();
-  if(targetStatus==='validated'){ newWizard(); openMTab('history'); }
-}
-
-/* ---------- Listes ---------- */
-function measureRow(m, withAction){
-  const badge = m.status==='validated' ? 'badge-green' : m.status==='draft' ? 'badge-teal' : m.status==='rejected' ? 'badge-red' : 'badge-orange';
-  const score = m.score ? `${m.score.raw_score}${m.score.max?'/'+m.score.max:''} ${m.score.score_unit||''}` : '—';
-  return `<div class="list-row">
-    <span class="mono" style="font-size:11.5px;">${m.reference}</span>
-    <span class="name">${m.instrument_code} · ${(MOMENTS.find(x=>x.code===m.measurement_context)||{}).label||m.measurement_context}</span>
-    <span class="meta">${m.service||'—'} · ${m.measurement_date||''}</span>
-    <span class="meta">Score ${score}</span>
-    <span class="badge ${badge}">${m.status}</span>
-    ${withAction?`<button class="btn btn-ghost btn-sm" data-open="${m.id}">Reprendre</button>`:''}
-  </div>`;
-}
-
-function renderMeasureLists(){
-  const cur = MEASUREMENTS.filter(m=> ['draft','in_progress'].includes(m.status));
-  const hist = MEASUREMENTS.filter(m=> ['validated','rejected','archived'].includes(m.status));
-  const c = document.getElementById('listCurrent');
-  const h = document.getElementById('listHistory');
-  c.innerHTML = cur.length ? cur.map(m=>measureRow(m,true)).join('') : '<div class="empty-row">Aucune mesure en cours.</div>';
-  h.innerHTML = hist.length ? hist.map(m=>measureRow(m,false)).join('') : '<div class="empty-row">Aucune mesure validée pour le moment.</div>';
-  c.querySelectorAll('[data-open]').forEach(b=> b.addEventListener('click', ()=>{
-    const m = MEASUREMENTS.find(x=>x.id===b.dataset.open);
-    const inst = PQ_REF.instruments.find(i=>i.code===m.instrument_code);
-    const ver = PQ_REF.versions.find(v=> v.instrument_code===m.instrument_code && v.version===m.instrument_version);
-    if(!ver){ showToast('Version d\'instrument introuvable.'); return; }
-    W = { step:5, context:{}, domain:m.domain, instrument:inst, version:ver, moment:m.measurement_context,
-          answers:{ ...(m.answers||{}) }, measurement:m };
-    openMTab('new'); renderWizard();
-  }));
-}
-
-/* ---------- Référentiels ---------- */
-function renderInstrumentTables(){
-  const it = document.getElementById('instrTable');
-  it.innerHTML = `<div class="pq-table"><div class="pq-tr pq-th"><span>Instrument</span><span>Domaine</span><span>Population</span><span>Source</span><span>Licence</span><span>Statut</span></div>` +
-    PQ_REF.instruments.map(i=>`<div class="pq-tr">
-      <span><strong>${i.name}</strong> <small class="mono">${i.code}</small></span>
-      <span>${(DOMAINS.find(d=>d.code===i.domain)||{}).label||i.domain}</span>
-      <span>${i.population||'—'}</span>
-      <span>${i.source||'—'}</span>
-      <span>${i.license_required ? `<span class="badge badge-amber">${i.license_status||'à vérifier'}</span>` : '<span class="badge badge-green">non requise</span>'}</span>
-      <span>${i.active!==false?'Actif':'Inactif'}</span></div>`).join('') + `</div>`;
-
-  const vt = document.getElementById('versionTable');
-  vt.innerHTML = `<div class="pq-table"><div class="pq-tr pq-th"><span>Instrument</span><span>Version</span><span>En vigueur</span><span>Items</span><span>Règle de calcul</span><span>Statut</span></div>` +
-    PQ_REF.versions.map(v=>`<div class="pq-tr">
-      <span><strong>${v.instrument_code}</strong></span>
-      <span class="mono">${v.version}</span>
-      <span>${v.effective_from||'—'}</span>
-      <span>${(v.items||[]).length}${(v.items||[]).some(i=>i.placeholder)?' <span class="badge badge-amber">placeholder</span>':''}</span>
-      <span class="mono">${(v.rule||{}).type||'—'}</span>
-      <span>${v.status||'—'}</span></div>`).join('') +
-    `</div><p class="pq-hint">Règle : une version déjà utilisée n'est jamais modifiée. Toute évolution crée une nouvelle version ; les mesures anciennes restent liées à l'ancienne version.</p>`;
-}
-
-/* ---------- Indicateurs calculés ---------- */
-const INDICATOR_DEFS = [
-  { code:'HONOS_ADM', name:'HoNOS — score à l\'admission', unit:'points', domain:'PSY',
-    formula:'moyenne des scores HoNOS validés au moment ADMISSION',
-    filter:m=> m.instrument_code==='HONOS' && m.measurement_context==='ADMISSION', agg:'AVG' },
-  { code:'HONOS_DIS', name:'HoNOS — score à la sortie', unit:'points', domain:'PSY',
-    formula:'moyenne des scores HoNOS validés au moment DISCHARGE',
-    filter:m=> m.instrument_code==='HONOS' && m.measurement_context==='DISCHARGE', agg:'AVG' },
-  { code:'BSCL_AVG', name:'BSCL — score moyen', unit:'score', domain:'PSY',
-    formula:'moyenne des scores BSCL validés', filter:m=> m.instrument_code==='BSCL', agg:'AVG' },
-  { code:'EFM_EPISODES', name:'EFM — épisodes de mesures limitatives', unit:'épisodes', domain:'PSY',
-    formula:'somme des épisodes déclarés (item EFM_04)', filter:m=> m.instrument_code==='EFM', agg:'SUM' },
-  { code:'PAIN_CONTROL', name:'Douleur maîtrisée', unit:'%', domain:'DOU',
-    formula:'mesures avec EVA ≤ 3 ÷ mesures douleur × 100',
-    filter:m=> m.instrument_code==='PQ_DOULEUR', agg:'RATE', numerator:m=> Number((m.answers||{}).DOU_02) <= 3 },
-  { code:'SATISFACTION', name:'Satisfaction globale (PREMs)', unit:'%', domain:'EXP',
-    formula:'moyenne normalisée des réponses PREMs × 100', filter:m=> m.instrument_code==='PQ_PREM', agg:'AVG' },
-  { code:'EBI_AVG', name:'EBI — score moyen', unit:'points', domain:'REA',
-    formula:'moyenne des scores EBI validés', filter:m=> m.instrument_code==='EBI', agg:'AVG' },
-  { code:'FIM_AVG', name:'FIM/MIF — score moyen', unit:'points', domain:'REA',
-    formula:'moyenne des scores FIM/MIF validés', filter:m=> m.instrument_code==='FIM_MIF', agg:'AVG' }
-];
-
-function computeIndicator(def){
-  const rows = MEASUREMENTS.filter(m=> m.status==='validated' && def.filter(m));
-  const values = rows.map(m=> m.score ? m.score.raw_score : null).filter(v=> v!==null);
-  let value = null, numerator = null, denominator = rows.length;
-  if(def.agg==='RATE'){
-    numerator = rows.filter(def.numerator).length;
-    value = denominator ? Math.round((numerator/denominator)*1000)/10 : null;
-  }else if(def.agg==='SUM'){
-    numerator = values.reduce((a,b)=>a+b,0); value = numerator;
-  }else{
-    numerator = values.reduce((a,b)=>a+b,0);
-    value = values.length ? Math.round((numerator/values.length)*100)/100 : null;
-  }
-  return { def, value, numerator, denominator, count: rows.length, rows };
-}
-
-function renderIndicators(){
-  const grid = document.getElementById('indicatorGrid');
-  grid.innerHTML = INDICATOR_DEFS.map(def=>{
-    const r = computeIndicator(def);
-    return `<div class="card kpi">
-      <div class="kpi-label">${r.def.name}<span class="badge badge-teal">${r.def.code}</span></div>
-      <div class="kpi-value">${r.value===null?'—':r.value}<small> ${r.def.unit}</small></div>
-      <div class="kpi-trend flat">${r.count} mesure(s) source(s)</div>
-      <button class="btn btn-ghost btn-sm" data-detail="${r.def.code}" style="margin-top:8px;">Voir le détail</button>
-    </div>`;
-  }).join('');
-  grid.querySelectorAll('[data-detail]').forEach(b=> b.addEventListener('click', ()=> showIndicatorDetail(b.dataset.detail)));
-}
-
-function showIndicatorDetail(code){
-  const def = INDICATOR_DEFS.find(d=>d.code===code);
-  if(!def) return;
-  const r = computeIndicator(def);
-  const body = document.getElementById('pqDetailBody');
-  body.innerHTML = `
-    <div class="pq-meta" style="margin-bottom:12px;">
-      <div><span>Indicateur</span><strong>${def.name}</strong></div>
-      <div><span>Code</span><strong class="mono">${def.code}</strong></div>
-      <div><span>Valeur</span><strong>${r.value===null?'—':r.value} ${def.unit}</strong></div>
-      <div><span>Période</span><strong>toutes périodes (démo)</strong></div>
-    </div>
-    <p style="font-size:13px;margin-bottom:8px;"><strong>Formule :</strong> ${def.formula}</p>
-    <p style="font-size:13px;margin-bottom:8px;"><strong>Numérateur :</strong> ${r.numerator===null?'—':r.numerator} &nbsp; · &nbsp; <strong>Dénominateur :</strong> ${r.denominator}</p>
-    <p style="font-size:13px;margin-bottom:12px;"><strong>Nombre de mesures sources :</strong> ${r.count}</p>
-    <div class="card-title" style="margin-top:14px;">Données sources</div>
-    ${r.rows.length ? r.rows.map(m=>`<div class="list-row"><span class="mono" style="font-size:11.5px;">${m.reference}</span>
-      <span class="name">${m.instrument_code} ${m.instrument_version}</span>
-      <span class="meta">${m.service||'—'} · ${m.measurement_date||''}</span>
-      <span class="meta">${m.score?m.score.raw_score:'—'}</span></div>`).join('')
-      : '<div class="empty-row">Aucune mesure validée n\'alimente encore cet indicateur.</div>'}`;
-  openModal('modalDetail');
-}
-
-/* ---------- Qualité des données ---------- */
-function renderDataQuality(){
-  const total = MEASUREMENTS.length;
-  const validated = MEASUREMENTS.filter(m=>m.status==='validated');
-  let completed = 0, incomplete = 0, incoherent = 0, noStay = 0, late = 0;
-  const today = new Date();
-  MEASUREMENTS.forEach(m=>{
-    const ver = PQ_REF.versions.find(v=> v.instrument_code===m.instrument_code && v.version===m.instrument_version);
-    if(ver){
-      const c = completeness(ver, m.answers||{});
-      if(c.total && c.done===c.total) completed++; else incomplete++;
-      if(validateAnswers(ver, m.answers||{}).filter(e=>!e.includes('obligatoire')).length) incoherent++;
-    }
-    if(!m.stay_ref) noStay++;
-    if(m.status!=='validated' && m.measurement_date && (today - new Date(m.measurement_date))/86400000 > 7) late++;
-  });
-  const rate = total ? Math.round((completed/total)*1000)/10 : 100;
-  const cards = [
-    ['Complétude', rate+' %', rate>=95?'badge-green':'badge-orange'],
-    ['Mesures en retard', late, late?'badge-orange':'badge-green'],
-    ['Mesures incomplètes', incomplete, incomplete?'badge-orange':'badge-green'],
-    ['Incohérences', incoherent, incoherent?'badge-red':'badge-green'],
-    ['Mesures validées', validated.length, 'badge-teal'],
-    ['Mesures sans séjour associé', noStay, noStay?'badge-orange':'badge-green']
-  ];
-  document.getElementById('dqGrid').innerHTML = cards.map(([l,v,b])=>
-    `<div class="card kpi"><div class="kpi-label">${l}</div><div class="kpi-value">${v}</div><span class="badge ${b}" style="width:fit-content;">contrôle automatique</span></div>`).join('');
-}
-
-function renderAuditLog(){
-  const el = document.getElementById('auditLogList');
-  el.innerHTML = AUDIT_LOG.length ? AUDIT_LOG.slice(0,25).map(a=>{
-    const m = MEASUREMENTS.find(x=>x.id===a.entity_id);
-    return `<div class="list-row"><span class="badge badge-teal">${a.action}</span>
-      <span class="name mono" style="font-size:11.5px;">${m?m.reference:a.entity_id}</span>
-      <span class="meta">${new Date(a.timestamp).toLocaleString('fr-FR')}</span>
-      <span class="meta">${a.user_id||''}</span></div>`;
-  }).join('') : '<div class="empty-row">Aucune action journalisée pour l\'instant.</div>';
-}
-
-/* ---------- Dashboard : traçabilité « Pourquoi ce chiffre ? » ---------- */
-const KPI_LINKS = { 'Satisfaction':'SATISFACTION', 'Douleur':'PAIN_CONTROL', 'ANQ':'HONOS_ADM' };
-const _origRenderDashboard = renderDashboard;
-renderDashboard = function(){
-  _origRenderDashboard();
-  const grid = document.getElementById('kpiGrid');
-  if(!grid) return;
-  Array.from(grid.children).forEach((card, idx)=>{
-    const label = card.textContent || '';
-    let code = null;
-    Object.keys(KPI_LINKS).forEach(k=>{ if(label.toLowerCase().includes(k.toLowerCase())) code = KPI_LINKS[k]; });
-    const btn = document.createElement('button');
-    btn.className = 'btn btn-ghost btn-sm';
-    btn.style.marginTop = '8px';
-    btn.textContent = 'Voir le détail';
-    btn.addEventListener('click', ()=>{
-      if(code) showIndicatorDetail(code);
-      else{
-        document.getElementById('pqDetailBody').innerHTML =
-          `<div class="setup-banner">Cet indicateur n'est pas encore relié au moteur de calcul. Configurez sa source dans <strong>Mesures &amp; indicateurs → Indicateurs</strong> pour qu'il soit calculé à partir des mesures saisies (aucune valeur ne doit rester saisie à la main).</div>`;
-        openModal('modalDetail');
-      }
-    });
-    card.appendChild(btn);
-  });
-};
-
-/* ---------- Démarrage du module ---------- */
-document.getElementById('btnNewMeasure').addEventListener('click', ()=>{ newWizard(); openMTab('new'); });
-
-async function initMeasuresModule(){
-  await pqLoadReferentiel();
-  await pqLoadMeasurements();
-  const banner = document.getElementById('pqBanner');
-  banner.innerHTML = pqRemote
-    ? ''
-    : `<div class="setup-banner">ℹ️ Mode démonstration : les mesures sont enregistrées <strong>localement dans ce navigateur</strong>. Exécutez le script <code>pulse_mesures.sql</code> dans Supabase (tables <code>pq_instruments</code>, <code>pq_instrument_versions</code>, <code>pq_measurements</code>, <code>pq_audit_logs</code>) pour basculer automatiquement en base.</div>`;
-  newWizard();
-  renderMeasureLists(); renderInstrumentTables(); renderIndicators(); renderDataQuality(); renderAuditLog();
-}
-initMeasuresModule();
-
 
 /* ---------- Démarrage ---------- */
 const reliaLink = document.getElementById('reliaSanteLink');
