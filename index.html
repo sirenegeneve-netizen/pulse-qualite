@@ -305,6 +305,7 @@
     <ul class="nav">
       <li><button data-target="voice"><span class="ic">😊</span><span class="label">Voix du patient</span></button></li>
       <li><button data-target="risks"><span class="ic">⚠️</span><span class="label">Gestion des risques</span></button></li>
+      <li><button data-target="analyses"><span class="ic">🔬</span><span class="label">Analyses &amp; CAPA</span></button></li>
       <li><button data-target="audits"><span class="ic">📋</span><span class="label">Audits</span></button></li>
     </ul>
 
@@ -525,6 +526,56 @@
       </div>
     </section>
 
+    <section class="section" id="analyses">
+      <div class="section-head">
+        <div>
+          <div class="eyebrow">Écoute & risques</div>
+          <h1 class="section-title">Analyses &amp; CAPA</h1>
+          <p class="section-desc">Analyses ALARM, actions correctives, retours d'expérience et vigilances — version simplifiée.</p>
+        </div>
+      </div>
+
+      <div class="card" style="margin-bottom:16px;" id="signauxFaiblesCard">
+        <div class="card-title">⚠️ Signaux faibles détectés</div>
+        <div class="card-sub">Calculé automatiquement — événements, réclamations et signalements croisés par service, aucune saisie nécessaire</div>
+        <div id="signauxFaiblesList"></div>
+      </div>
+
+      <div class="card" style="margin-bottom:16px;">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:2px;">
+          <div class="card-title" style="margin:0;">Analyses ALARM</div>
+          <button class="btn btn-sm" id="btnNewAnalyse">+ Nouvelle analyse</button>
+        </div>
+        <div class="card-sub">Patient, tâches, professionnel, équipe, environnement, système d'information, organisation — jamais réduit à "erreur humaine"</div>
+        <div id="analysesList"></div>
+      </div>
+
+      <div class="card" style="margin-bottom:16px;">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:2px;">
+          <div class="card-title" style="margin:0;">CAPA — actions correctives et préventives</div>
+          <button class="btn btn-sm" id="btnNewCapa">+ Nouvelle CAPA</button>
+        </div>
+        <div class="card-sub">Cliquez sur le statut pour le faire avancer</div>
+        <div id="capaList"></div>
+      </div>
+
+      <div class="card" style="margin-bottom:16px;">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:2px;">
+          <div class="card-title" style="margin:0;">REX — retours d'expérience</div>
+          <button class="btn btn-sm" id="btnNewRex">+ Nouveau REX</button>
+        </div>
+        <div id="rexList"></div>
+      </div>
+
+      <div class="card">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:2px;">
+          <div class="card-title" style="margin:0;">Vigilances</div>
+          <button class="btn btn-sm" id="btnNewVigilance">+ Nouvelle vigilance</button>
+        </div>
+        <div id="vigilancesList"></div>
+      </div>
+    </section>
+
     <section class="section" id="audits">
       <div class="section-head">
         <div>
@@ -609,6 +660,81 @@
     </section>
 
   </main>
+</div>
+
+<div class="modal-overlay" id="modalAnalyse">
+  <div class="modal" style="max-width:520px;">
+    <h3>Nouvelle analyse ALARM</h3>
+    <p class="hint">Explorer plusieurs facteurs contributifs — jamais réduire à "erreur humaine".</p>
+    <div class="field"><label>Référence de la déclaration concernée (facultatif)</label><input type="text" id="anaDeclRef" placeholder="Ex : EVT-26-000003"></div>
+    <div class="field"><label>Patient</label><textarea id="anaPatient" placeholder="Facteurs liés au patient…"></textarea></div>
+    <div class="field"><label>Tâches</label><textarea id="anaTaches" placeholder="Facteurs liés aux tâches à accomplir…"></textarea></div>
+    <div class="field"><label>Professionnel</label><textarea id="anaProfessionnel" placeholder="Facteurs individuels…"></textarea></div>
+    <div class="field"><label>Équipe</label><textarea id="anaEquipe" placeholder="Communication, supervision…"></textarea></div>
+    <div class="field"><label>Environnement</label><textarea id="anaEnvironnement" placeholder="Charge de travail, locaux…"></textarea></div>
+    <div class="field"><label>Systèmes d'information / technologie</label><textarea id="anaSI" placeholder="DPI, alertes, ergonomie…"></textarea></div>
+    <div class="field"><label>Organisation</label><textarea id="anaOrganisation" placeholder="Procédures, contexte institutionnel…"></textarea></div>
+    <div class="field"><label>Causes identifiées (synthèse)</label><textarea id="anaCauses"></textarea></div>
+    <div class="modal-actions">
+      <button class="btn btn-ghost btn-sm" data-close-modal>Annuler</button>
+      <button class="btn btn-sm" id="anaSubmit">Enregistrer l'analyse</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modalCapa">
+  <div class="modal">
+    <h3>Nouvelle CAPA</h3>
+    <div class="field"><label>Référence de l'analyse concernée (facultatif)</label><input type="text" id="capaAnaRef" placeholder="Ex : ANAL-26-000001"></div>
+    <div class="field"><label>Problème</label><textarea id="capaProbleme"></textarea></div>
+    <div class="field"><label>Cause</label><textarea id="capaCause"></textarea></div>
+    <div class="field"><label>Action</label><textarea id="capaAction"></textarea></div>
+    <div class="field"><label>Responsable</label><input type="text" id="capaResponsable"></div>
+    <div class="field"><label>Échéance</label><input type="date" id="capaEcheance"></div>
+    <div class="modal-actions">
+      <button class="btn btn-ghost btn-sm" data-close-modal>Annuler</button>
+      <button class="btn btn-sm" id="capaSubmit">Créer la CAPA</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modalRex">
+  <div class="modal">
+    <h3>Nouveau REX</h3>
+    <div class="field"><label>Référence de la déclaration concernée (facultatif)</label><input type="text" id="rexDeclRef" placeholder="Ex : EVT-26-000003"></div>
+    <div class="field"><label>Ce qui s'est passé</label><textarea id="rexPasse"></textarea></div>
+    <div class="field"><label>Ce qui a fonctionné</label><textarea id="rexFonctionne"></textarea></div>
+    <div class="field"><label>Ce qui n'a pas fonctionné</label><textarea id="rexPasFonctionne"></textarea></div>
+    <div class="field"><label>Ce que nous avons appris</label><textarea id="rexAppris"></textarea></div>
+    <div class="field"><label>Ce qui doit changer</label><textarea id="rexChanger"></textarea></div>
+    <div class="modal-actions">
+      <button class="btn btn-ghost btn-sm" data-close-modal>Annuler</button>
+      <button class="btn btn-sm" id="rexSubmit">Enregistrer le REX</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modalVigilance">
+  <div class="modal">
+    <h3>Nouvelle vigilance</h3>
+    <div class="field">
+      <label>Type</label>
+      <select id="vigType">
+        <option>Pharmacovigilance</option>
+        <option>Matériovigilance</option>
+        <option>Hémovigilance</option>
+        <option>Biovigilance</option>
+        <option>Infectiovigilance</option>
+        <option>Réactovigilance</option>
+        <option>Autre</option>
+      </select>
+    </div>
+    <div class="field"><label>Description</label><textarea id="vigDescription"></textarea></div>
+    <div class="modal-actions">
+      <button class="btn btn-ghost btn-sm" data-close-modal>Annuler</button>
+      <button class="btn btn-sm" id="vigSubmit">Enregistrer</button>
+    </div>
+  </div>
 </div>
 
 <div class="modal-overlay" id="modalDeclaration">
@@ -800,8 +926,8 @@
    Remplacez les deux valeurs ci-dessous par celles de votre projet :
    Project Settings → API → Project URL / anon public key
    ============================================================ */
-const SUPABASE_URL = 'https://vblfvrrukvfrzwtqgboo.supabase.co';
-const SUPABASE_ANON_KEY = 'sb_publishable_h3Ka1v4ZqUuk-F0o8s0tpA_-T-62hg0';
+const SUPABASE_URL = 'VOTRE_SUPABASE_URL';
+const SUPABASE_ANON_KEY = 'VOTRE_SUPABASE_ANON_KEY';
 
 /* Lien vers la plateforme Relia Santé (anciennement Synapath), utilisée pour
    les résultats détaillés de satisfaction patient. Remplacez par l'URL réelle
@@ -911,6 +1037,7 @@ async function loadAll(){
     loadReliaSignaux(); // lecture croisée, optionnelle : n'interrompt jamais l'app si absente
     loadMesures(); // moteur de mesures, optionnel lui aussi (peut ne pas exister encore)
     loadDeclarations(); // déclaration universelle, optionnelle elle aussi
+    loadAnalysesCapa(); // analyses, CAPA, REX, vigilances — optionnel lui aussi
   }catch(err){
     statusEl.className = 'db-status db-off';
     statusText.textContent = 'Erreur de connexion';
@@ -1349,6 +1476,189 @@ document.getElementById('declSubmit').addEventListener('click', async ()=>{
   if(consequence==='grave') piste = '⚠️ Pourrait nécessiter une analyse approfondie — vérification par un responsable habilité recommandée.';
   showToast(`Signalement ${reference} enregistré. ${piste}`);
   await loadDeclarations();
+});
+
+/* ============================================================
+   Analyses ALARM, CAPA, REX, Vigilances — espace professionnel
+   simplifié. Optionnel : n'interrompt jamais le reste de l'app si
+   les tables pq_analyses / pq_capa / pq_rex / pq_vigilances n'existent
+   pas encore (database/schema-analyses.sql non exécuté).
+   ============================================================ */
+let ANALYSES=[], CAPAS=[], REXS=[], VIGILANCES=[];
+let analysesTablesReady = false;
+
+async function loadAnalysesCapa(){
+  try{
+    const [an, cp, rx, vg] = await Promise.all([
+      sb.from('pq_analyses').select('*').order('created_at',{ascending:false}),
+      sb.from('pq_capa').select('*').order('created_at',{ascending:false}),
+      sb.from('pq_rex').select('*').order('created_at',{ascending:false}),
+      sb.from('pq_vigilances').select('*').order('created_at',{ascending:false}),
+    ]);
+    if(an.error||cp.error||rx.error||vg.error) throw (an.error||cp.error||rx.error||vg.error);
+    ANALYSES=an.data; CAPAS=cp.data; REXS=rx.data; VIGILANCES=vg.data;
+    analysesTablesReady = true;
+    renderAnalyses(); renderCapas(); renderRex(); renderVigilances(); renderSignauxFaibles();
+  }catch(err){
+    analysesTablesReady = false;
+    const msg = '<div class="empty-row">Module non initialisé : exécutez database/schema-analyses.sql dans Supabase pour l\'activer.</div>';
+    ['analysesList','capaList','rexList','vigilancesList','signauxFaiblesList'].forEach(id=>{
+      const el = document.getElementById(id); if(el) el.innerHTML = msg;
+    });
+  }
+}
+
+function nextRef(prefix, existing){
+  const year = new Date().getFullYear().toString().slice(-2);
+  const n = existing.length + 1;
+  return `${prefix}-${year}-${String(n).padStart(6,'0')}`;
+}
+
+/* ---------- Signaux faibles : calcul automatique, aucune saisie ---------- */
+function renderSignauxFaibles(){
+  const box = document.getElementById('signauxFaiblesList');
+  // Croise : événements Pulse Qualité + réclamations Voix du patient + signalements Relia Santé, par service
+  const counts = {};
+  (EVENEMENTS||[]).forEach(e=>{ counts[e.service] = (counts[e.service]||0) + 1; });
+  (VOIX||[]).filter(v=>v.type==='plainte').forEach(v=>{ if(v.service) counts[v.service] = (counts[v.service]||0) + 1; });
+
+  const signaux = Object.entries(counts).filter(([,n])=>n>=3).map(([service,n])=>({service, n}));
+  if(!signaux.length){ box.innerHTML = '<div class="empty-row">Aucun signal faible détecté pour le moment (seuil : 3 signaux ou plus sur un même service).</div>'; return; }
+  box.innerHTML = signaux.map(s=>`
+    <div class="list-row"><span class="dot dot-orange"></span><span class="name">${s.n} signaux cumulés — ${s.service}</span><span class="badge badge-orange">Processus potentiellement dégradé</span></div>
+  `).join('');
+}
+
+/* ---------- Analyses ---------- */
+function renderAnalyses(){
+  const box = document.getElementById('analysesList');
+  if(!ANALYSES.length){ box.innerHTML = '<div class="empty-row">Aucune analyse enregistrée.</div>'; return; }
+  box.innerHTML = ANALYSES.slice(0,6).map(a=>{
+    const when = new Date(a.created_at).toLocaleDateString('fr-FR',{day:'2-digit',month:'2-digit'});
+    return `<div class="list-row"><span class="name">${a.reference}${a.declaration_reference?' — '+a.declaration_reference:''}</span><span class="badge badge-teal">${a.methode}</span><span class="meta">${when}</span></div>`;
+  }).join('');
+}
+document.getElementById('btnNewAnalyse').addEventListener('click', ()=>{
+  if(!analysesTablesReady){ showToast("Module non initialisé — exécutez d'abord database/schema-analyses.sql"); return; }
+  ['anaDeclRef','anaPatient','anaTaches','anaProfessionnel','anaEquipe','anaEnvironnement','anaSI','anaOrganisation','anaCauses'].forEach(id=>document.getElementById(id).value='');
+  openModal('modalAnalyse');
+});
+document.getElementById('anaSubmit').addEventListener('click', async ()=>{
+  if(!dbReady){ showToast('Base non connectée.'); return; }
+  const reference = nextRef('ANAL', ANALYSES);
+  const { error } = await sb.from('pq_analyses').insert({
+    reference, declaration_reference: document.getElementById('anaDeclRef').value.trim()||null,
+    patient: document.getElementById('anaPatient').value.trim(),
+    taches: document.getElementById('anaTaches').value.trim(),
+    professionnel: document.getElementById('anaProfessionnel').value.trim(),
+    equipe: document.getElementById('anaEquipe').value.trim(),
+    environnement: document.getElementById('anaEnvironnement').value.trim(),
+    systemes_info: document.getElementById('anaSI').value.trim(),
+    organisation: document.getElementById('anaOrganisation').value.trim(),
+    causes_identifiees: document.getElementById('anaCauses').value.trim(),
+  });
+  if(error){ showToast('Erreur : '+error.message); return; }
+  closeModal('modalAnalyse'); showToast(`Analyse ${reference} enregistrée.`);
+  await loadAnalysesCapa();
+});
+
+/* ---------- CAPA ---------- */
+const CAPA_STATUTS = ['planned','in_progress','completed','verified','closed'];
+const CAPA_LABELS = {planned:'Planifiée', in_progress:'En cours', completed:'Terminée', verified:'Vérifiée', closed:'Clôturée'};
+function renderCapas(){
+  const box = document.getElementById('capaList');
+  if(!CAPAS.length){ box.innerHTML = '<div class="empty-row">Aucune CAPA enregistrée.</div>'; return; }
+  box.innerHTML = CAPAS.slice(0,6).map(c=>`
+    <div class="list-row">
+      <span class="name">${c.reference} — ${c.probleme.slice(0,50)}${c.probleme.length>50?'…':''}</span>
+      <button class="badge badge-orange" style="border:none;cursor:pointer;" data-capa-id="${c.id}" data-statut="${c.statut}">${CAPA_LABELS[c.statut]} →</button>
+      <span class="meta">${c.echeance? new Date(c.echeance).toLocaleDateString('fr-FR',{day:'2-digit',month:'2-digit'}) : ''}</span>
+    </div>`).join('');
+  box.querySelectorAll('[data-capa-id]').forEach(btn=>{
+    btn.addEventListener('click', async ()=>{
+      const cur = CAPA_STATUTS.indexOf(btn.dataset.statut);
+      const next = CAPA_STATUTS[Math.min(cur+1, CAPA_STATUTS.length-1)];
+      if(next === btn.dataset.statut){ showToast('Cette CAPA est déjà clôturée.'); return; }
+      const { error } = await sb.from('pq_capa').update({ statut: next }).eq('id', btn.dataset.capaId);
+      if(error){ showToast('Erreur : '+error.message); return; }
+      await loadAnalysesCapa();
+    });
+  });
+}
+document.getElementById('btnNewCapa').addEventListener('click', ()=>{
+  if(!analysesTablesReady){ showToast("Module non initialisé — exécutez d'abord database/schema-analyses.sql"); return; }
+  ['capaAnaRef','capaProbleme','capaCause','capaAction','capaResponsable','capaEcheance'].forEach(id=>document.getElementById(id).value='');
+  openModal('modalCapa');
+});
+document.getElementById('capaSubmit').addEventListener('click', async ()=>{
+  if(!dbReady){ showToast('Base non connectée.'); return; }
+  const probleme = document.getElementById('capaProbleme').value.trim();
+  const action = document.getElementById('capaAction').value.trim();
+  if(!probleme || !action){ showToast('Indiquez au moins le problème et l\'action.'); return; }
+  const reference = nextRef('CAPA', CAPAS);
+  const { error } = await sb.from('pq_capa').insert({
+    reference, analyse_reference: document.getElementById('capaAnaRef').value.trim()||null,
+    probleme, cause: document.getElementById('capaCause').value.trim(),
+    action, responsable: document.getElementById('capaResponsable').value.trim(),
+    echeance: document.getElementById('capaEcheance').value || null, statut:'planned'
+  });
+  if(error){ showToast('Erreur : '+error.message); return; }
+  closeModal('modalCapa'); showToast(`CAPA ${reference} créée.`);
+  await loadAnalysesCapa();
+});
+
+/* ---------- REX ---------- */
+function renderRex(){
+  const box = document.getElementById('rexList');
+  if(!REXS.length){ box.innerHTML = '<div class="empty-row">Aucun REX enregistré.</div>'; return; }
+  box.innerHTML = REXS.slice(0,6).map(r=>{
+    const when = new Date(r.created_at).toLocaleDateString('fr-FR',{day:'2-digit',month:'2-digit'});
+    return `<div class="list-row"><span class="name">${r.reference}${r.declaration_reference?' — '+r.declaration_reference:''}</span><span class="meta">${when}</span></div>`;
+  }).join('');
+}
+document.getElementById('btnNewRex').addEventListener('click', ()=>{
+  if(!analysesTablesReady){ showToast("Module non initialisé — exécutez d'abord database/schema-analyses.sql"); return; }
+  ['rexDeclRef','rexPasse','rexFonctionne','rexPasFonctionne','rexAppris','rexChanger'].forEach(id=>document.getElementById(id).value='');
+  openModal('modalRex');
+});
+document.getElementById('rexSubmit').addEventListener('click', async ()=>{
+  if(!dbReady){ showToast('Base non connectée.'); return; }
+  const reference = nextRef('REX', REXS);
+  const { error } = await sb.from('pq_rex').insert({
+    reference, declaration_reference: document.getElementById('rexDeclRef').value.trim()||null,
+    ce_qui_sest_passe: document.getElementById('rexPasse').value.trim(),
+    ce_qui_a_fonctionne: document.getElementById('rexFonctionne').value.trim(),
+    ce_qui_na_pas_fonctionne: document.getElementById('rexPasFonctionne').value.trim(),
+    ce_que_nous_avons_appris: document.getElementById('rexAppris').value.trim(),
+    ce_qui_doit_changer: document.getElementById('rexChanger').value.trim(),
+  });
+  if(error){ showToast('Erreur : '+error.message); return; }
+  closeModal('modalRex'); showToast(`REX ${reference} enregistré.`);
+  await loadAnalysesCapa();
+});
+
+/* ---------- Vigilances ---------- */
+function renderVigilances(){
+  const box = document.getElementById('vigilancesList');
+  if(!VIGILANCES.length){ box.innerHTML = '<div class="empty-row">Aucune vigilance enregistrée.</div>'; return; }
+  box.innerHTML = VIGILANCES.slice(0,6).map(v=>{
+    const badgeClass = v.statut==='cloturee'?'badge-green':v.statut==='en_cours'?'badge-orange':'badge-teal';
+    return `<div class="list-row"><span class="name">${v.type} — ${v.description.slice(0,50)}${v.description.length>50?'…':''}</span><span class="badge ${badgeClass}">${v.statut}</span></div>`;
+  }).join('');
+}
+document.getElementById('btnNewVigilance').addEventListener('click', ()=>{
+  if(!analysesTablesReady){ showToast("Module non initialisé — exécutez d'abord database/schema-analyses.sql"); return; }
+  document.getElementById('vigDescription').value='';
+  openModal('modalVigilance');
+});
+document.getElementById('vigSubmit').addEventListener('click', async ()=>{
+  if(!dbReady){ showToast('Base non connectée.'); return; }
+  const description = document.getElementById('vigDescription').value.trim();
+  if(!description){ showToast('Décrivez la vigilance.'); return; }
+  const { error } = await sb.from('pq_vigilances').insert({ type: document.getElementById('vigType').value, description });
+  if(error){ showToast('Erreur : '+error.message); return; }
+  closeModal('modalVigilance'); showToast('Vigilance enregistrée.');
+  await loadAnalysesCapa();
 });
 
 document.getElementById('btnDeclareEvent').addEventListener('click', ()=> openModal('modalEvent'));

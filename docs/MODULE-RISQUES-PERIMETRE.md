@@ -13,6 +13,14 @@ Le document "Document d'évolution technique global v2.0" décrit un vrai systè
 - Message rassurant après envoi + **proposition de piste non contraignante** (jamais une qualification automatique définitive)
 - Liste "Mes signalements" avec statut
 
+## ✅ Fait — espace professionnel simplifié (nouveau module "Analyses & CAPA")
+
+- **Analyses ALARM** : les 7 dimensions du modèle (patient, tâches, professionnel, équipe, environnement, systèmes d'information, organisation), jamais réduites à "erreur humaine", avec référence unique (`ANAL-26-000001`)
+- **CAPA** : problème, cause, action, responsable, échéance, avec suivi de statut cliquable (Planifiée → En cours → Terminée → Vérifiée → Clôturée)
+- **REX** : les 5 questions du retour d'expérience (ce qui s'est passé / a fonctionné / n'a pas fonctionné / appris / doit changer)
+- **Vigilances** : les 6 types réglementaires (pharmaco-, matério-, hémo-, bio-, infectio-, réactovigilance)
+- **Signaux faibles** : détection automatique, calculée à partir des données déjà en base (événements + réclamations croisés par service, seuil de 3), sans aucune nouvelle saisie — exactement le principe de la section 48 du document
+
 ## 🟡 Simplifié par rapport au document
 
 - Une seule table (`pq_declarations`), pas de séparation `events` / `risks` / `analyses` / `barriers` / `capa` / `rex` — la structure complète en aval (qualification, analyse ALARM/REMED, barrières, CAPA, REX) n'existe pas
@@ -23,14 +31,13 @@ Le document "Document d'évolution technique global v2.0" décrit un vrai systè
 
 ## ⏳ Pas fait — nécessite une vraie équipe et du temps
 
-- Espace professionnel complet (Vue d'ensemble / Risques / Événements / Analyses / Barrières / Vigilances / CAPA / REX)
-- Moteur multi-méthodes d'analyse (ALARM, London Protocol, 5 Pourquoi, Ishikawa, AMDEC...)
-- Matrice de criticité configurable
-- CAPA avec suivi d'efficacité
-- Détection de récurrences et signaux faibles croisés (événements + réclamations + audits)
+- Moteur multi-méthodes d'analyse complet (London Protocol, 5 Pourquoi, Ishikawa, AMDEC — seule la méthode ALARM est disponible)
+- Matrice de criticité configurable (gravité × probabilité)
+- Suivi d'efficacité détaillé des CAPA (indicateur avant/après)
 - Authentification et droits par profil (déclarant / référent risques / direction...)
 - Contexte réglementaire France/Suisse configurable
 - IA de catégorisation (section 60 du document — explicitement "Phase 2")
+- Lien automatique entre une CAPA et l'indicateur qu'elle est censée améliorer (la donnée existe, le rapprochement reste manuel)
 
 ## Pourquoi s'arrêter là
 
