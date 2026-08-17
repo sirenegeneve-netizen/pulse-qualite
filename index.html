@@ -298,23 +298,30 @@
       <span class="ic">⚡</span><span class="label">Le patient aujourd'hui</span>
     </button>
 
-    <div class="nav-group-label">Pilotage</div>
+    <div class="nav-group-label">Vue d'ensemble</div>
     <ul class="nav">
       <li><button data-target="dashboard"><span class="ic">🏥</span><span class="label">Tableau de bord</span></button></li>
-      <li><button data-target="mesures"><span class="ic">📐</span><span class="label">Mesures &amp; indicateurs</span></button></li>
-      <li><button data-target="teams"><span class="ic">👩‍⚕️</span><span class="label">Les équipes</span></button></li>
       <li><button data-target="map"><span class="ic">📈</span><span class="label">Qualité en temps réel</span></button></li>
+      <li><button data-target="teams"><span class="ic">👩‍⚕️</span><span class="label">Les équipes</span></button></li>
     </ul>
 
-    <div class="nav-group-label">Écoute & risques</div>
+    <div class="nav-group-label">Mesurer</div>
     <ul class="nav">
-      <li><button data-target="voice"><span class="ic">😊</span><span class="label">Voix du patient</span></button></li>
-      <li><button data-target="risks"><span class="ic">⚠️</span><span class="label">Gestion des risques</span></button></li>
-      <li><button data-target="analyses"><span class="ic">🔬</span><span class="label">Analyses &amp; CAPA</span></button></li>
+      <li><button data-target="mesures"><span class="ic">📐</span><span class="label">Mesures &amp; indicateurs</span></button></li>
       <li><button data-target="audits"><span class="ic">📋</span><span class="label">Audits</span></button></li>
     </ul>
 
-    <div class="nav-group-label">Amélioration</div>
+    <div class="nav-group-label">Signaler &amp; agir</div>
+    <ul class="nav">
+      <li><button data-target="risks"><span class="ic">⚠️</span><span class="label">Gestion des risques</span></button></li>
+    </ul>
+
+    <div class="nav-group-label">Écouter</div>
+    <ul class="nav">
+      <li><button data-target="voice"><span class="ic">😊</span><span class="label">Voix du patient</span></button></li>
+    </ul>
+
+    <div class="nav-group-label">Améliorer</div>
     <ul class="nav">
       <li><button data-target="ideas"><span class="ic">💡</span><span class="label">Boîte à idées</span></button></li>
       <li><button data-target="ai"><span class="ic">🤖</span><span class="label">IA Qualité</span></button></li>
@@ -385,7 +392,7 @@
     <section class="section" id="mesures">
       <div class="section-head">
         <div>
-          <div class="eyebrow">Pilotage</div>
+          <div class="eyebrow">Mesurer</div>
           <h1 class="section-title">Mesures &amp; indicateurs</h1>
           <p class="section-desc">Moteur générique de saisie, calcul et traçabilité — preuve de concept.</p>
         </div>
@@ -418,7 +425,7 @@
     <section class="section" id="dashboard">
       <div class="section-head">
         <div>
-          <div class="eyebrow">Pilotage</div>
+          <div class="eyebrow">Vue d'ensemble</div>
           <h1 class="section-title">Tableau de bord Direction</h1>
           <p class="section-desc">Tous les indicateurs qualité sur une seule page.</p>
         </div>
@@ -452,7 +459,7 @@
     <section class="section" id="teams">
       <div class="section-head">
         <div>
-          <div class="eyebrow">Pilotage</div>
+          <div class="eyebrow">Vue d'ensemble</div>
           <h1 class="section-title">Les équipes</h1>
           <p class="section-desc">Chaque service ne voit que ses propres indicateurs, actions, audits, formations et événements.</p>
         </div>
@@ -464,7 +471,7 @@
     <section class="section" id="voice">
       <div class="section-head">
         <div>
-          <div class="eyebrow">Écoute</div>
+          <div class="eyebrow">Écouter</div>
           <h1 class="section-title">Voix du patient</h1>
           <p class="section-desc">Pas seulement les réclamations — aussi ce qui fonctionne bien.</p>
         </div>
@@ -497,94 +504,93 @@
     <section class="section" id="risks">
       <div class="section-head">
         <div>
-          <div class="eyebrow">Écoute & risques</div>
+          <div class="eyebrow">Signaler, analyser, agir</div>
           <h1 class="section-title">Gestion des risques</h1>
-          <p class="section-desc">Événements indésirables, presque accidents, analyses et CAPA — avec suivi automatique.</p>
+          <p class="section-desc">Un seul parcours : déclarer une situation, la suivre, l'analyser si besoin, agir.</p>
         </div>
         <button class="btn btn-sm" id="btnDeclareEvent">Déclarer un événement (qualifié)</button>
       </div>
 
-      <div class="card" style="margin-bottom:16px;background:linear-gradient(135deg, var(--surface), var(--teal-tint));">
-        <div class="card-title" style="font-size:16px;">Vous avez vu ou vécu quelque chose ?</div>
-        <p style="font-size:13px;color:var(--ink-soft);margin-bottom:14px;max-width:520px;">Vous n'avez pas besoin de connaître le vocabulaire qualité. Décrivez simplement la situation, avec vos propres mots — Pulse Qualité s'occupe du reste.</p>
-        <button class="btn" id="btnDeclarationUniverselle">🚨 Faire un signalement</button>
+      <div class="tabs" id="riskTabs">
+        <button class="tab active" data-tab="declarer">📣 Déclarer &amp; suivre</button>
+        <button class="tab" data-tab="analyser">🔬 Analyser &amp; agir</button>
       </div>
 
-      <div class="grid grid-4" id="riskKpis" style="margin-bottom:16px;"></div>
+      <div class="tabpanel active" data-panel="declarer">
+        <div class="card" style="margin-bottom:16px;background:linear-gradient(135deg, var(--surface), var(--teal-tint));">
+          <div class="card-title" style="font-size:16px;">Vous avez vu ou vécu quelque chose ?</div>
+          <p style="font-size:13px;color:var(--ink-soft);margin-bottom:14px;max-width:520px;">Vous n'avez pas besoin de connaître le vocabulaire qualité. Décrivez simplement la situation, avec vos propres mots — Pulse Qualité s'occupe du reste.</p>
+          <button class="btn" id="btnDeclarationUniverselle">🚨 Faire un signalement</button>
+        </div>
 
-      <div class="card" style="margin-bottom:16px;">
-        <div class="card-title">Mes signalements</div>
-        <div class="card-sub">Déclaration libre — la qualification qualité vient après, elle n'est jamais demandée au déclarant</div>
-        <div id="declarationsList"></div>
-      </div>
+        <div class="grid grid-4" id="riskKpis" style="margin-bottom:16px;"></div>
 
-      <div class="card">
-        <div class="card-title">Suivi des événements</div>
-        <div class="card-sub">Enregistré en base — visible par tous ceux qui ouvrent l'application</div>
-        <div id="riskList"></div>
-      </div>
+        <div class="card" style="margin-bottom:16px;">
+          <div class="card-title">Mes signalements</div>
+          <div class="card-sub">Déclaration libre — la qualification qualité vient après, elle n'est jamais demandée au déclarant</div>
+          <div id="declarationsList"></div>
+        </div>
 
-      <div class="card" style="margin-top:16px;" id="reliaSignauxCard">
-        <div class="card-title">Signaux remontés par les patients (Relia Santé)</div>
-        <div class="card-sub">Lecture croisée — événements et ressentis "besoin d'aide" signalés côté patient, non dupliqués ici</div>
-        <div id="reliaSignauxList"><div class="empty-row">Chargement…</div></div>
-      </div>
-    </section>
+        <div class="card">
+          <div class="card-title">Suivi des événements</div>
+          <div class="card-sub">Enregistré en base — visible par tous ceux qui ouvrent l'application</div>
+          <div id="riskList"></div>
+        </div>
 
-    <section class="section" id="analyses">
-      <div class="section-head">
-        <div>
-          <div class="eyebrow">Écoute & risques</div>
-          <h1 class="section-title">Analyses &amp; CAPA</h1>
-          <p class="section-desc">Analyses ALARM, actions correctives, retours d'expérience et vigilances — version simplifiée.</p>
+        <div class="card" style="margin-top:16px;" id="reliaSignauxCard">
+          <div class="card-title">Signaux remontés par les patients (Relia Santé)</div>
+          <div class="card-sub">Lecture croisée — événements et ressentis "besoin d'aide" signalés côté patient, non dupliqués ici</div>
+          <div id="reliaSignauxList"><div class="empty-row">Chargement…</div></div>
         </div>
       </div>
 
-      <div class="card" style="margin-bottom:16px;" id="signauxFaiblesCard">
-        <div class="card-title">⚠️ Signaux faibles détectés</div>
-        <div class="card-sub">Calculé automatiquement — événements, réclamations et signalements croisés par service, aucune saisie nécessaire</div>
-        <div id="signauxFaiblesList"></div>
-      </div>
-
-      <div class="card" style="margin-bottom:16px;">
-        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:2px;">
-          <div class="card-title" style="margin:0;">Analyses ALARM</div>
-          <button class="btn btn-sm" id="btnNewAnalyse">+ Nouvelle analyse</button>
+      <div class="tabpanel" data-panel="analyser">
+        <div class="card" style="margin-bottom:16px;" id="signauxFaiblesCard">
+          <div class="card-title">⚠️ Signaux faibles détectés</div>
+          <div class="card-sub">Calculé automatiquement — événements, réclamations et signalements croisés par service, aucune saisie nécessaire</div>
+          <div id="signauxFaiblesList"></div>
         </div>
-        <div class="card-sub">Patient, tâches, professionnel, équipe, environnement, système d'information, organisation — jamais réduit à "erreur humaine"</div>
-        <div id="analysesList"></div>
-      </div>
 
-      <div class="card" style="margin-bottom:16px;">
-        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:2px;">
-          <div class="card-title" style="margin:0;">CAPA — actions correctives et préventives</div>
-          <button class="btn btn-sm" id="btnNewCapa">+ Nouvelle CAPA</button>
+        <div class="card" style="margin-bottom:16px;">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:2px;">
+            <div class="card-title" style="margin:0;">Analyses ALARM</div>
+            <button class="btn btn-sm" id="btnNewAnalyse">+ Nouvelle analyse</button>
+          </div>
+          <div class="card-sub">Patient, tâches, professionnel, équipe, environnement, système d'information, organisation — jamais réduit à "erreur humaine"</div>
+          <div id="analysesList"></div>
         </div>
-        <div class="card-sub">Cliquez sur le statut pour le faire avancer</div>
-        <div id="capaList"></div>
-      </div>
 
-      <div class="card" style="margin-bottom:16px;">
-        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:2px;">
-          <div class="card-title" style="margin:0;">REX — retours d'expérience</div>
-          <button class="btn btn-sm" id="btnNewRex">+ Nouveau REX</button>
+        <div class="card" style="margin-bottom:16px;">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:2px;">
+            <div class="card-title" style="margin:0;">CAPA — actions correctives et préventives</div>
+            <button class="btn btn-sm" id="btnNewCapa">+ Nouvelle CAPA</button>
+          </div>
+          <div class="card-sub">Cliquez sur le statut pour le faire avancer</div>
+          <div id="capaList"></div>
         </div>
-        <div id="rexList"></div>
-      </div>
 
-      <div class="card">
-        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:2px;">
-          <div class="card-title" style="margin:0;">Vigilances</div>
-          <button class="btn btn-sm" id="btnNewVigilance">+ Nouvelle vigilance</button>
+        <div class="card" style="margin-bottom:16px;">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:2px;">
+            <div class="card-title" style="margin:0;">REX — retours d'expérience</div>
+            <button class="btn btn-sm" id="btnNewRex">+ Nouveau REX</button>
+          </div>
+          <div id="rexList"></div>
         </div>
-        <div id="vigilancesList"></div>
+
+        <div class="card">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:2px;">
+            <div class="card-title" style="margin:0;">Vigilances</div>
+            <button class="btn btn-sm" id="btnNewVigilance">+ Nouvelle vigilance</button>
+          </div>
+          <div id="vigilancesList"></div>
+        </div>
       </div>
     </section>
 
     <section class="section" id="audits">
       <div class="section-head">
         <div>
-          <div class="eyebrow">Écoute & risques</div>
+          <div class="eyebrow">Mesurer</div>
           <h1 class="section-title">Audits</h1>
           <p class="section-desc">Planification, checklist numérique, rapports automatiques et suivi des actions.</p>
         </div>
@@ -608,7 +614,7 @@
     <section class="section" id="map">
       <div class="section-head">
         <div>
-          <div class="eyebrow">Pilotage</div>
+          <div class="eyebrow">Vue d'ensemble</div>
           <h1 class="section-title">Qualité en temps réel</h1>
           <p class="section-desc">La carte de l'hôpital. Cliquez sur un service pour voir ses indicateurs, incidents, actions et satisfaction.</p>
         </div>
@@ -935,8 +941,8 @@
    Remplacez les deux valeurs ci-dessous par celles de votre projet :
    Project Settings → API → Project URL / anon public key
    ============================================================ */
-const SUPABASE_URL = 'https://vblfvrrukvfrzwtqgboo.supabase.co';
-const SUPABASE_ANON_KEY = 'sb_publishable_h3Ka1v4ZqUuk-F0o8s0tpA_-T-62hg0';
+const SUPABASE_URL = 'VOTRE_SUPABASE_URL';
+const SUPABASE_ANON_KEY = 'VOTRE_SUPABASE_ANON_KEY';
 
 /* Lien vers la plateforme Relia Santé (anciennement Synapath), utilisée pour
    les résultats détaillés de satisfaction patient. Remplacez par l'URL réelle
@@ -996,6 +1002,16 @@ document.querySelectorAll('.modal-overlay').forEach(ov=>{
 document.querySelectorAll('#voiceTabs .tab').forEach(tab=>{
   tab.addEventListener('click', ()=>{
     document.querySelectorAll('#voiceTabs .tab').forEach(t=>t.classList.remove('active'));
+    tab.classList.add('active');
+    document.querySelectorAll('.tabpanel').forEach(p=>p.classList.remove('active'));
+    document.querySelector(`.tabpanel[data-panel="${tab.dataset.tab}"]`).classList.add('active');
+  });
+});
+
+/* ---------- Risk tabs (Déclarer & suivre / Analyser & agir) ---------- */
+document.querySelectorAll('#riskTabs .tab').forEach(tab=>{
+  tab.addEventListener('click', ()=>{
+    document.querySelectorAll('#riskTabs .tab').forEach(t=>t.classList.remove('active'));
     tab.classList.add('active');
     document.querySelectorAll('.tabpanel').forEach(p=>p.classList.remove('active'));
     document.querySelector(`.tabpanel[data-panel="${tab.dataset.tab}"]`).classList.add('active');
