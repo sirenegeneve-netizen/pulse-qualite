@@ -197,6 +197,11 @@
   .field input:focus, .field select:focus, .field textarea:focus{ outline:none; border-color:var(--teal); }
   .field textarea{ resize:vertical; min-height:70px; }
   .concerne-grid{ display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-top:6px; }
+  .alarm-grid{ display:grid; grid-template-columns:1fr 1fr; gap:0 12px; }
+  .alarm-grid .field{ margin-bottom:10px; }
+  .alarm-grid .field label{ font-size:11px; }
+  .alarm-grid .field input{ padding:7px 10px; font-size:13px; }
+  @media (max-width:560px){ .alarm-grid{ grid-template-columns:1fr; } }
   .concerne-grid label{ display:flex; align-items:center; gap:8px; font-weight:500; font-size:13px; background:var(--surface-2); padding:8px 10px; border-radius:8px; }
   .concerne-grid input{ width:auto; }
   .modal-actions{ display:flex; justify-content:flex-end; gap:8px; margin-top:18px; }
@@ -663,18 +668,22 @@
 </div>
 
 <div class="modal-overlay" id="modalAnalyse">
-  <div class="modal" style="max-width:520px;">
+  <div class="modal" style="max-width:560px;">
     <h3>Nouvelle analyse ALARM</h3>
-    <p class="hint">Explorer plusieurs facteurs contributifs — jamais réduire à "erreur humaine".</p>
+    <p class="hint">Tous les champs ci-dessous sont facultatifs — ne remplissez que ce qui est pertinent pour cette situation.</p>
     <div class="field"><label>Référence de la déclaration concernée (facultatif)</label><input type="text" id="anaDeclRef" placeholder="Ex : EVT-26-000003"></div>
-    <div class="field"><label>Patient</label><textarea id="anaPatient" placeholder="Facteurs liés au patient…"></textarea></div>
-    <div class="field"><label>Tâches</label><textarea id="anaTaches" placeholder="Facteurs liés aux tâches à accomplir…"></textarea></div>
-    <div class="field"><label>Professionnel</label><textarea id="anaProfessionnel" placeholder="Facteurs individuels…"></textarea></div>
-    <div class="field"><label>Équipe</label><textarea id="anaEquipe" placeholder="Communication, supervision…"></textarea></div>
-    <div class="field"><label>Environnement</label><textarea id="anaEnvironnement" placeholder="Charge de travail, locaux…"></textarea></div>
-    <div class="field"><label>Systèmes d'information / technologie</label><textarea id="anaSI" placeholder="DPI, alertes, ergonomie…"></textarea></div>
-    <div class="field"><label>Organisation</label><textarea id="anaOrganisation" placeholder="Procédures, contexte institutionnel…"></textarea></div>
-    <div class="field"><label>Causes identifiées (synthèse)</label><textarea id="anaCauses"></textarea></div>
+
+    <div class="alarm-grid">
+      <div class="field"><label>Patient</label><input type="text" id="anaPatient" placeholder="Facteurs liés au patient"></div>
+      <div class="field"><label>Tâches</label><input type="text" id="anaTaches" placeholder="Tâches à accomplir"></div>
+      <div class="field"><label>Professionnel</label><input type="text" id="anaProfessionnel" placeholder="Facteurs individuels"></div>
+      <div class="field"><label>Équipe</label><input type="text" id="anaEquipe" placeholder="Communication, supervision"></div>
+      <div class="field"><label>Environnement</label><input type="text" id="anaEnvironnement" placeholder="Charge de travail, locaux"></div>
+      <div class="field"><label>Systèmes d'information</label><input type="text" id="anaSI" placeholder="DPI, alertes, ergonomie"></div>
+      <div class="field" style="grid-column:1 / -1;"><label>Organisation</label><input type="text" id="anaOrganisation" placeholder="Procédures, contexte institutionnel"></div>
+    </div>
+
+    <div class="field"><label>Causes identifiées (synthèse, facultatif)</label><textarea id="anaCauses" style="min-height:50px;"></textarea></div>
     <div class="modal-actions">
       <button class="btn btn-ghost btn-sm" data-close-modal>Annuler</button>
       <button class="btn btn-sm" id="anaSubmit">Enregistrer l'analyse</button>
@@ -926,8 +935,8 @@
    Remplacez les deux valeurs ci-dessous par celles de votre projet :
    Project Settings → API → Project URL / anon public key
    ============================================================ */
-const SUPABASE_URL = 'https://vblfvrrukvfrzwtqgboo.supabase.co';
-const SUPABASE_ANON_KEY = 'sb_publishable_h3Ka1v4ZqUuk-F0o8s0tpA_-T-62hg0';
+const SUPABASE_URL = 'VOTRE_SUPABASE_URL';
+const SUPABASE_ANON_KEY = 'VOTRE_SUPABASE_ANON_KEY';
 
 /* Lien vers la plateforme Relia Santé (anciennement Synapath), utilisée pour
    les résultats détaillés de satisfaction patient. Remplacez par l'URL réelle
