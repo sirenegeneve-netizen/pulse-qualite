@@ -202,6 +202,17 @@
   .alarm-grid .field label{ font-size:11px; }
   .alarm-grid .field input{ padding:7px 10px; font-size:13px; }
   @media (max-width:560px){ .alarm-grid{ grid-template-columns:1fr; } }
+
+  .pipeline{ display:flex; gap:8px; flex-wrap:wrap; }
+  .pipe-stage{ all:unset; flex:1; min-width:130px; text-align:center; padding:16px 10px; border-radius:14px; background:var(--surface-2); cursor:pointer; border:2px solid transparent; }
+  .pipe-stage.active-filter{ border-color:var(--teal); }
+  .pipe-stage .n{ font-family:'Space Grotesk'; font-size:26px; font-weight:700; }
+  .pipe-stage .l{ font-size:11.5px; color:var(--ink-soft); font-weight:600; margin-top:2px; }
+  .thread-item{ border-left:3px solid var(--line); padding:8px 0 8px 14px; margin-bottom:8px; }
+  .thread-item.stage-declare{ border-color:var(--ink-faint); }
+  .thread-item.stage-analyse{ border-color:var(--teal); }
+  .thread-item.stage-action{ border-color:var(--orange); }
+  .thread-item.stage-cloture{ border-color:var(--green); }
   .concerne-grid label{ display:flex; align-items:center; gap:8px; font-weight:500; font-size:13px; background:var(--surface-2); padding:8px 10px; border-radius:8px; }
   .concerne-grid input{ width:auto; }
   .modal-actions{ display:flex; justify-content:flex-end; gap:8px; margin-top:18px; }
@@ -526,8 +537,14 @@
         <div class="grid grid-4" id="riskKpis" style="margin-bottom:16px;"></div>
 
         <div class="card" style="margin-bottom:16px;">
+          <div class="card-title">Vue globale du parcours</div>
+          <div class="card-sub">Chaque signalement suit ce chemin — cliquez une étape pour filtrer la liste ci-dessous</div>
+          <div class="pipeline" id="pipelineView"></div>
+        </div>
+
+        <div class="card" style="margin-bottom:16px;">
           <div class="card-title">Mes signalements</div>
-          <div class="card-sub">Déclaration libre — la qualification qualité vient après, elle n'est jamais demandée au déclarant</div>
+          <div class="card-sub">Cliquez sur un signalement pour voir son suivi complet : analyse(s), action(s), résultat</div>
           <div id="declarationsList"></div>
         </div>
 
@@ -673,11 +690,24 @@
   </main>
 </div>
 
+<div class="modal-overlay" id="modalDeclDetail">
+  <div class="modal" style="max-width:560px;">
+    <h3 id="ddRef">—</h3>
+    <p class="hint" id="ddStage">—</p>
+    <div id="ddBody"></div>
+    <div class="modal-actions">
+      <button class="btn btn-ghost btn-sm" data-close-modal>Fermer</button>
+    </div>
+  </div>
+</div>
+
 <div class="modal-overlay" id="modalAnalyse">
   <div class="modal" style="max-width:560px;">
     <h3>Nouvelle analyse ALARM</h3>
     <p class="hint">Tous les champs ci-dessous sont facultatifs — ne remplissez que ce qui est pertinent pour cette situation.</p>
-    <div class="field"><label>Référence de la déclaration concernée (facultatif)</label><input type="text" id="anaDeclRef" placeholder="Ex : EVT-26-000003"></div>
+    <div class="field"><label>Signalement concerné (facultatif)</label>
+      <select id="anaDeclarationId"><option value="">— Aucun signalement lié —</option></select>
+    </div>
 
     <div class="alarm-grid">
       <div class="field"><label>Patient</label><input type="text" id="anaPatient" placeholder="Facteurs liés au patient"></div>
@@ -700,7 +730,12 @@
 <div class="modal-overlay" id="modalCapa">
   <div class="modal">
     <h3>Nouvelle CAPA</h3>
-    <div class="field"><label>Référence de l'analyse concernée (facultatif)</label><input type="text" id="capaAnaRef" placeholder="Ex : ANAL-26-000001"></div>
+    <div class="field"><label>Signalement concerné (facultatif)</label>
+      <select id="capaDeclarationId"><option value="">— Aucun signalement lié —</option></select>
+    </div>
+    <div class="field"><label>Analyse concernée (facultatif — filtrée sur le signalement choisi)</label>
+      <select id="capaAnalyseId"><option value="">— Aucune analyse liée —</option></select>
+    </div>
     <div class="field"><label>Problème</label><textarea id="capaProbleme"></textarea></div>
     <div class="field"><label>Cause</label><textarea id="capaCause"></textarea></div>
     <div class="field"><label>Action</label><textarea id="capaAction"></textarea></div>
@@ -716,7 +751,9 @@
 <div class="modal-overlay" id="modalRex">
   <div class="modal">
     <h3>Nouveau REX</h3>
-    <div class="field"><label>Référence de la déclaration concernée (facultatif)</label><input type="text" id="rexDeclRef" placeholder="Ex : EVT-26-000003"></div>
+    <div class="field"><label>Signalement concerné (facultatif)</label>
+      <select id="rexDeclarationId"><option value="">— Aucun signalement lié —</option></select>
+    </div>
     <div class="field"><label>Ce qui s'est passé</label><textarea id="rexPasse"></textarea></div>
     <div class="field"><label>Ce qui a fonctionné</label><textarea id="rexFonctionne"></textarea></div>
     <div class="field"><label>Ce qui n'a pas fonctionné</label><textarea id="rexPasFonctionne"></textarea></div>
@@ -941,8 +978,8 @@
    Remplacez les deux valeurs ci-dessous par celles de votre projet :
    Project Settings → API → Project URL / anon public key
    ============================================================ */
-const SUPABASE_URL = 'https://vblfvrrukvfrzwtqgboo.supabase.co';
-const SUPABASE_ANON_KEY = 'sb_publishable_h3Ka1v4ZqUuk-F0o8s0tpA_-T-62hg0';
+const SUPABASE_URL = 'VOTRE_SUPABASE_URL';
+const SUPABASE_ANON_KEY = 'VOTRE_SUPABASE_ANON_KEY';
 
 /* Lien vers la plateforme Relia Santé (anciennement Synapath), utilisée pour
    les résultats détaillés de satisfaction patient. Remplacez par l'URL réelle
@@ -1061,8 +1098,8 @@ async function loadAll(){
 
     loadReliaSignaux(); // lecture croisée, optionnelle : n'interrompt jamais l'app si absente
     loadMesures(); // moteur de mesures, optionnel lui aussi (peut ne pas exister encore)
-    loadDeclarations(); // déclaration universelle, optionnelle elle aussi
-    loadAnalysesCapa(); // analyses, CAPA, REX, vigilances — optionnel lui aussi
+    await loadDeclarations(); // déclaration universelle, optionnelle elle aussi
+    await loadAnalysesCapa(); // analyses, CAPA, REX, vigilances — rendu final du suivi de bout en bout
   }catch(err){
     statusEl.className = 'db-status db-off';
     statusText.textContent = 'Erreur de connexion';
@@ -1438,23 +1475,102 @@ async function loadDeclarations(){
     if(error) throw error;
     DECLARATIONS = data;
     declTablesReady = true;
-    renderDeclarations();
+    renderPipeline(); renderDeclarations();
   }catch(err){
     declTablesReady = false;
     box.innerHTML = '<div class="empty-row">Module non initialisé : exécutez database/schema-risques.sql dans Supabase pour l\'activer.</div>';
   }
 }
 
+/* ---------- Calcul du statut réel d'un signalement, à partir des liens ---------- */
+function computeStage(d){
+  const analyses = (ANALYSES||[]).filter(a=>a.declaration_id===d.id);
+  const analyseIds = analyses.map(a=>a.id);
+  const capas = (CAPAS||[]).filter(c=> c.declaration_id===d.id || analyseIds.includes(c.analyse_id));
+  if(!analyses.length && !capas.length) return 'declare';
+  if(capas.length){
+    const allDone = capas.every(c=>c.statut==='closed' || c.statut==='verified');
+    return allDone ? 'cloture' : 'action';
+  }
+  return 'analyse';
+}
+const STAGE_LABELS = {declare:'Déclaré', analyse:'En analyse', action:'Action en cours', cloture:'Clôturé'};
+const STAGE_BADGES = {declare:'badge-teal', analyse:'badge-orange', action:'badge-amber', cloture:'badge-green'};
+
+let pipelineFilter = null;
+
+function renderPipeline(){
+  const box = document.getElementById('pipelineView');
+  if(!box) return;
+  const counts = {declare:0, analyse:0, action:0, cloture:0};
+  DECLARATIONS.forEach(d=>{ counts[computeStage(d)]++; });
+  const order = ['declare','analyse','action','cloture'];
+  box.innerHTML = order.map(k=>`
+    <button class="pipe-stage ${pipelineFilter===k?'active-filter':''}" data-stage="${k}">
+      <div class="n">${counts[k]}</div><div class="l">${STAGE_LABELS[k]}</div>
+    </button>`).join('');
+  box.querySelectorAll('.pipe-stage').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      pipelineFilter = pipelineFilter===btn.dataset.stage ? null : btn.dataset.stage;
+      renderPipeline(); renderDeclarations();
+    });
+  });
+}
+
 function renderDeclarations(){
   const box = document.getElementById('declarationsList');
-  if(!DECLARATIONS.length){ box.innerHTML = '<div class="empty-row">Aucun signalement pour le moment.</div>'; return; }
-  const statutLabel = {declare:'Déclarée', en_analyse:'En analyse', cloture:'Clôturée', brouillon:'Brouillon'};
-  const statutBadge = {declare:'badge-teal', en_analyse:'badge-orange', cloture:'badge-green', brouillon:'badge-amber'};
-  box.innerHTML = DECLARATIONS.slice(0,8).map(d=>{
+  const list = pipelineFilter ? DECLARATIONS.filter(d=>computeStage(d)===pipelineFilter) : DECLARATIONS;
+  if(!list.length){ box.innerHTML = '<div class="empty-row">Aucun signalement'+(pipelineFilter?' à cette étape':' pour le moment')+'.</div>'; return; }
+  box.innerHTML = list.slice(0,10).map(d=>{
     const when = new Date(d.created_at).toLocaleString('fr-FR',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'});
-    const apercu = d.description.length > 70 ? d.description.slice(0,70)+'…' : d.description;
-    return `<div class="list-row"><span class="name">${d.reference} — ${apercu}</span><span class="badge ${statutBadge[d.statut]||'badge-teal'}">${statutLabel[d.statut]||d.statut}</span><span class="meta">${when}</span></div>`;
+    const apercu = d.description.length > 60 ? d.description.slice(0,60)+'…' : d.description;
+    const stage = computeStage(d);
+    return `<div class="list-row" style="cursor:pointer;" data-decl-id="${d.id}"><span class="name">${d.reference} — ${apercu}</span><span class="badge ${STAGE_BADGES[stage]}">${STAGE_LABELS[stage]}</span><span class="meta">${when}</span></div>`;
   }).join('');
+  box.querySelectorAll('[data-decl-id]').forEach(row=>{
+    row.addEventListener('click', ()=> openDeclDetail(parseInt(row.dataset.declId,10)));
+  });
+}
+
+/* ---------- Détail d'un signalement : suivi de bout en bout ---------- */
+function openDeclDetail(declId){
+  const d = DECLARATIONS.find(x=>x.id===declId);
+  if(!d) return;
+  const stage = computeStage(d);
+  const analyses = ANALYSES.filter(a=>a.declaration_id===declId);
+  const analyseIds = analyses.map(a=>a.id);
+  const capas = CAPAS.filter(c=> c.declaration_id===declId || analyseIds.includes(c.analyse_id));
+  const rexs = REXS.filter(r=>r.declaration_id===declId);
+
+  document.getElementById('ddRef').textContent = d.reference;
+  document.getElementById('ddStage').innerHTML = `Statut actuel : <span class="badge ${STAGE_BADGES[stage]}">${STAGE_LABELS[stage]}</span>`;
+
+  let html = `<div class="thread-item stage-declare"><div class="card-title" style="font-size:13px;margin-bottom:2px;">📣 Déclaration</div><div style="font-size:13px;color:var(--ink-soft);">${d.description}</div><div class="action-meta">${d.concerne||''} ${d.mesures_immediates?'· '+d.mesures_immediates:''}</div></div>`;
+
+  if(analyses.length){
+    analyses.forEach(a=>{
+      html += `<div class="thread-item stage-analyse"><div class="card-title" style="font-size:13px;margin-bottom:2px;">🔬 Analyse ${a.reference}</div><div style="font-size:12.5px;color:var(--ink-soft);">${a.causes_identifiees || 'Facteurs explorés : '+[a.patient,a.taches,a.professionnel,a.equipe,a.environnement,a.systemes_info,a.organisation].filter(Boolean).join(', ')}</div></div>`;
+    });
+  } else {
+    html += `<div class="thread-item"><div class="empty-row" style="padding:4px 0;">Aucune analyse encore réalisée.</div></div>`;
+  }
+
+  if(capas.length){
+    capas.forEach(c=>{
+      html += `<div class="thread-item stage-action"><div class="card-title" style="font-size:13px;margin-bottom:2px;">✅ CAPA ${c.reference}</div><div style="font-size:12.5px;color:var(--ink-soft);">${c.action}</div><div class="action-meta">Responsable : ${c.responsable||'—'} · Statut : ${CAPA_LABELS[c.statut]}${c.efficacite?' · Efficacité : '+c.efficacite:''}</div></div>`;
+    });
+  } else {
+    html += `<div class="thread-item"><div class="empty-row" style="padding:4px 0;">Aucune action corrective encore créée.</div></div>`;
+  }
+
+  if(rexs.length){
+    rexs.forEach(r=>{
+      html += `<div class="thread-item stage-cloture"><div class="card-title" style="font-size:13px;margin-bottom:2px;">📘 REX ${r.reference}</div><div style="font-size:12.5px;color:var(--ink-soft);">${r.ce_que_nous_avons_appris || r.ce_qui_sest_passe || ''}</div></div>`;
+    });
+  }
+
+  document.getElementById('ddBody').innerHTML = html;
+  openModal('modalDeclDetail');
 }
 
 document.getElementById('btnDeclarationUniverselle').addEventListener('click', ()=>{
@@ -1524,6 +1640,7 @@ async function loadAnalysesCapa(){
     ANALYSES=an.data; CAPAS=cp.data; REXS=rx.data; VIGILANCES=vg.data;
     analysesTablesReady = true;
     renderAnalyses(); renderCapas(); renderRex(); renderVigilances(); renderSignauxFaibles();
+    renderPipeline(); renderDeclarations(); // recalcule le statut réel maintenant que les liens sont connus
   }catch(err){
     analysesTablesReady = false;
     const msg = '<div class="empty-row">Module non initialisé : exécutez database/schema-analyses.sql dans Supabase pour l\'activer.</div>';
@@ -1555,24 +1672,38 @@ function renderSignauxFaibles(){
 }
 
 /* ---------- Analyses ---------- */
+function declLabel(d){
+  const apercu = d.description.length > 40 ? d.description.slice(0,40)+'…' : d.description;
+  return `${d.reference} — ${apercu}`;
+}
+function populateDeclSelect(select){
+  const current = select.value;
+  select.innerHTML = '<option value="">— Aucun signalement lié —</option>' +
+    DECLARATIONS.map(d=>`<option value="${d.id}">${declLabel(d)}</option>`).join('');
+  select.value = current;
+}
 function renderAnalyses(){
   const box = document.getElementById('analysesList');
   if(!ANALYSES.length){ box.innerHTML = '<div class="empty-row">Aucune analyse enregistrée.</div>'; return; }
   box.innerHTML = ANALYSES.slice(0,6).map(a=>{
     const when = new Date(a.created_at).toLocaleDateString('fr-FR',{day:'2-digit',month:'2-digit'});
-    return `<div class="list-row"><span class="name">${a.reference}${a.declaration_reference?' — '+a.declaration_reference:''}</span><span class="badge badge-teal">${a.methode}</span><span class="meta">${when}</span></div>`;
+    const decl = DECLARATIONS.find(d=>d.id===a.declaration_id);
+    return `<div class="list-row"><span class="name">${a.reference}${decl?' — '+decl.reference:''}</span><span class="badge badge-teal">${a.methode}</span><span class="meta">${when}</span></div>`;
   }).join('');
 }
 document.getElementById('btnNewAnalyse').addEventListener('click', ()=>{
   if(!analysesTablesReady){ showToast("Module non initialisé — exécutez d'abord database/schema-analyses.sql"); return; }
-  ['anaDeclRef','anaPatient','anaTaches','anaProfessionnel','anaEquipe','anaEnvironnement','anaSI','anaOrganisation','anaCauses'].forEach(id=>document.getElementById(id).value='');
+  ['anaPatient','anaTaches','anaProfessionnel','anaEquipe','anaEnvironnement','anaSI','anaOrganisation','anaCauses'].forEach(id=>document.getElementById(id).value='');
+  populateDeclSelect(document.getElementById('anaDeclarationId'));
+  document.getElementById('anaDeclarationId').value = '';
   openModal('modalAnalyse');
 });
 document.getElementById('anaSubmit').addEventListener('click', async ()=>{
   if(!dbReady){ showToast('Base non connectée.'); return; }
   const reference = nextRef('ANAL', ANALYSES);
+  const declId = document.getElementById('anaDeclarationId').value || null;
   const { error } = await sb.from('pq_analyses').insert({
-    reference, declaration_reference: document.getElementById('anaDeclRef').value.trim()||null,
+    reference, declaration_id: declId,
     patient: document.getElementById('anaPatient').value.trim(),
     taches: document.getElementById('anaTaches').value.trim(),
     professionnel: document.getElementById('anaProfessionnel').value.trim(),
@@ -1610,9 +1741,20 @@ function renderCapas(){
     });
   });
 }
+function refreshCapaAnalyseOptions(){
+  const declId = document.getElementById('capaDeclarationId').value;
+  const sel = document.getElementById('capaAnalyseId');
+  const options = declId ? ANALYSES.filter(a=>String(a.declaration_id)===declId) : ANALYSES;
+  sel.innerHTML = '<option value="">— Aucune analyse liée —</option>' +
+    options.map(a=>`<option value="${a.id}">${a.reference}</option>`).join('');
+}
+document.getElementById('capaDeclarationId').addEventListener('change', refreshCapaAnalyseOptions);
 document.getElementById('btnNewCapa').addEventListener('click', ()=>{
   if(!analysesTablesReady){ showToast("Module non initialisé — exécutez d'abord database/schema-analyses.sql"); return; }
-  ['capaAnaRef','capaProbleme','capaCause','capaAction','capaResponsable','capaEcheance'].forEach(id=>document.getElementById(id).value='');
+  ['capaProbleme','capaCause','capaAction','capaResponsable','capaEcheance'].forEach(id=>document.getElementById(id).value='');
+  populateDeclSelect(document.getElementById('capaDeclarationId'));
+  document.getElementById('capaDeclarationId').value = '';
+  refreshCapaAnalyseOptions();
   openModal('modalCapa');
 });
 document.getElementById('capaSubmit').addEventListener('click', async ()=>{
@@ -1622,7 +1764,9 @@ document.getElementById('capaSubmit').addEventListener('click', async ()=>{
   if(!probleme || !action){ showToast('Indiquez au moins le problème et l\'action.'); return; }
   const reference = nextRef('CAPA', CAPAS);
   const { error } = await sb.from('pq_capa').insert({
-    reference, analyse_reference: document.getElementById('capaAnaRef').value.trim()||null,
+    reference,
+    declaration_id: document.getElementById('capaDeclarationId').value || null,
+    analyse_id: document.getElementById('capaAnalyseId').value || null,
     probleme, cause: document.getElementById('capaCause').value.trim(),
     action, responsable: document.getElementById('capaResponsable').value.trim(),
     echeance: document.getElementById('capaEcheance').value || null, statut:'planned'
@@ -1638,19 +1782,22 @@ function renderRex(){
   if(!REXS.length){ box.innerHTML = '<div class="empty-row">Aucun REX enregistré.</div>'; return; }
   box.innerHTML = REXS.slice(0,6).map(r=>{
     const when = new Date(r.created_at).toLocaleDateString('fr-FR',{day:'2-digit',month:'2-digit'});
-    return `<div class="list-row"><span class="name">${r.reference}${r.declaration_reference?' — '+r.declaration_reference:''}</span><span class="meta">${when}</span></div>`;
+    const decl = DECLARATIONS.find(d=>d.id===r.declaration_id);
+    return `<div class="list-row"><span class="name">${r.reference}${decl?' — '+decl.reference:''}</span><span class="meta">${when}</span></div>`;
   }).join('');
 }
 document.getElementById('btnNewRex').addEventListener('click', ()=>{
   if(!analysesTablesReady){ showToast("Module non initialisé — exécutez d'abord database/schema-analyses.sql"); return; }
-  ['rexDeclRef','rexPasse','rexFonctionne','rexPasFonctionne','rexAppris','rexChanger'].forEach(id=>document.getElementById(id).value='');
+  ['rexPasse','rexFonctionne','rexPasFonctionne','rexAppris','rexChanger'].forEach(id=>document.getElementById(id).value='');
+  populateDeclSelect(document.getElementById('rexDeclarationId'));
+  document.getElementById('rexDeclarationId').value = '';
   openModal('modalRex');
 });
 document.getElementById('rexSubmit').addEventListener('click', async ()=>{
   if(!dbReady){ showToast('Base non connectée.'); return; }
   const reference = nextRef('REX', REXS);
   const { error } = await sb.from('pq_rex').insert({
-    reference, declaration_reference: document.getElementById('rexDeclRef').value.trim()||null,
+    reference, declaration_id: document.getElementById('rexDeclarationId').value || null,
     ce_qui_sest_passe: document.getElementById('rexPasse').value.trim(),
     ce_qui_a_fonctionne: document.getElementById('rexFonctionne').value.trim(),
     ce_qui_na_pas_fonctionne: document.getElementById('rexPasFonctionne').value.trim(),

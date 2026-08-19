@@ -1,8 +1,11 @@
 -- ============================================================
 -- Pulse Qualité — Espace professionnel : Analyses, CAPA, REX, Vigilances
--- Fichier ADDITIF : n'affecte aucune table existante.
--- Version simplifiée — pas de moteur multi-méthodes complet (ALARM
--- uniquement), pas de matrice de criticité configurable.
+-- Fichier ADDITIF — À exécuter APRÈS schema-risques.sql (pq_declarations
+-- doit déjà exister, ces tables s'y relient par vraie clé étrangère).
+--
+-- Version 2 : remplace les références en texte libre par de vrais liens
+-- (declaration_id, analyse_id) pour permettre un vrai suivi de bout en
+-- bout : une déclaration → ses analyses → leurs CAPA → leur résultat.
 -- ============================================================
 
 drop table if exists pq_vigilances cascade;
@@ -10,13 +13,10 @@ drop table if exists pq_rex cascade;
 drop table if exists pq_capa cascade;
 drop table if exists pq_analyses cascade;
 
--- Analyse ALARM simplifiée, rattachée à une déclaration (référence libre,
--- pas de contrainte stricte : une analyse peut aussi naître d'un
--- signalement Relia Santé ou d'un constat sans référence Pulse Qualité).
 create table pq_analyses (
   id bigint generated always as identity primary key,
-  reference text unique,              -- ANAL-26-000001
-  declaration_reference text,         -- ex: 'EVT-26-000003', facultatif
+  reference text unique,                          -- ANAL-26-000001
+  declaration_id bigint references pq_declarations(id) on delete set null,
   methode text default 'ALARM',
   patient text,
   taches text,
@@ -33,8 +33,9 @@ create table pq_analyses (
 
 create table pq_capa (
   id bigint generated always as identity primary key,
-  reference text unique,              -- CAPA-26-000001
-  analyse_reference text,             -- facultatif, lien vers une analyse
+  reference text unique,                          -- CAPA-26-000001
+  analyse_id bigint references pq_analyses(id) on delete set null,
+  declaration_id bigint references pq_declarations(id) on delete set null, -- lien direct possible même sans analyse
   probleme text not null,
   cause text,
   action text not null,
@@ -47,8 +48,8 @@ create table pq_capa (
 
 create table pq_rex (
   id bigint generated always as identity primary key,
-  reference text unique,              -- REX-26-000001
-  declaration_reference text,
+  reference text unique,                          -- REX-26-000001
+  declaration_id bigint references pq_declarations(id) on delete set null,
   ce_qui_sest_passe text,
   ce_qui_a_fonctionne text,
   ce_qui_na_pas_fonctionne text,

@@ -21,6 +21,14 @@ Le document "Document d'évolution technique global v2.0" décrit un vrai systè
 - **Vigilances** : les 6 types réglementaires (pharmaco-, matério-, hémo-, bio-, infectio-, réactovigilance)
 - **Signaux faibles** : détection automatique, calculée à partir des données déjà en base (événements + réclamations croisés par service, seuil de 3), sans aucune nouvelle saisie — exactement le principe de la section 48 du document
 
+## ✅ Fait — vrais liens et suivi de bout en bout (au lieu de texte libre)
+
+Correction importante après un premier retour : les analyses, CAPA et REX étaient d'abord reliés à une déclaration par un champ texte libre à retaper (ex : coller "EVT-26-000003" à la main), sans vrai lien ni vue d'ensemble. Désormais :
+- Chaque analyse, CAPA et REX se lie à une déclaration via un **vrai menu déroulant** (clé étrangère en base, pas du texte)
+- Une CAPA peut se lier soit directement à une déclaration, soit à une analyse précise (les choix se filtrent automatiquement selon la déclaration choisie)
+- **Cliquer sur un signalement** dans "Mes signalements" ouvre sa **fiche de suivi complète** : la déclaration, puis chaque analyse liée, puis chaque CAPA liée avec son statut, puis les REX — tout au même endroit
+- **Vue globale en entonnoir** : 4 compteurs cliquables (Déclaré / En analyse / Action en cours / Clôturé), calculés automatiquement à partir des liens réels (pas d'un champ statut saisi à la main) — cliquer un compteur filtre la liste des signalements à cette étape
+
 ## 🟡 Simplifié par rapport au document
 
 - Une seule table (`pq_declarations`), pas de séparation `events` / `risks` / `analyses` / `barriers` / `capa` / `rex` — la structure complète en aval (qualification, analyse ALARM/REMED, barrières, CAPA, REX) n'existe pas
